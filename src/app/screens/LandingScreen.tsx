@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
   Alert,
 } from 'react-native';
@@ -11,8 +10,8 @@ import ContinueCard from '@app/components/ContinueCard';
 import RecentList from '@app/components/RecentList';
 import { useRecentDocs } from '@app/hooks/useRecentDocs';
 import { addRecentDocument, openDocument } from '@app/services/documents';
-import { spacing } from '@theme/spacing';
 import { useCallback } from 'react';
+import styles from './LandingScreenStyles';
 
 export default function LandingScreen() {
   const { recents, lastOpened, refresh } = useRecentDocs();
@@ -112,21 +111,3 @@ function inferType(name: string): 'epub' | 'pdf' | 'txt' | 'unknown' {
   if (lower.endsWith('.txt')) return 'txt';
   return 'unknown';
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0b0f14', padding: spacing.lg },
-  topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-  },
-  title: { color: '#e6edf3', fontSize: 28, fontWeight: '700' },
-  pickBtn: {
-    backgroundColor: '#4ea1ff',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  pickBtnText: { color: '#08111a', fontWeight: '700' },
-});

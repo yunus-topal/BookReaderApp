@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
+import styles from './SettingsScreenStyles';
 
 export default function VocabularyScreen() {
   return (
@@ -8,7 +9,3 @@ export default function VocabularyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0b0f14', padding: 16 },
-  text: { color: '#e6edf3' },
-});

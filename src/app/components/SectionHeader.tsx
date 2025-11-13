@@ -1,5 +1,5 @@
-import { spacing } from '@theme/spacing';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import styles from './SectionHeaderStyles';
 
 interface Props {
   title: string;
@@ -20,13 +20,3 @@ export default function SectionHeader({ title, actionLabel, onAction }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  title: { color: '#9db1c6', fontWeight: '700', letterSpacing: 0.3 },
-  action: { color: '#4ea1ff', fontWeight: '700' },
-});

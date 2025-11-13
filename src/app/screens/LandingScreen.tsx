@@ -11,10 +11,13 @@ import RecentList from '@app/components/RecentList';
 import { useRecentDocs } from '@app/hooks/useRecentDocs';
 import { addRecentDocument, openDocument } from '@app/services/documents';
 import { useCallback } from 'react';
-import styles from './LandingScreenStyles';
+import createLandingStyles from './LandingScreenStyles';
+import { useAppTheme } from '@theme/ThemeProvider';
 
 export default function LandingScreen() {
+  const { theme } = useAppTheme();
   const { recents, lastOpened, refresh } = useRecentDocs();
+  const styles = createLandingStyles(theme);
 
   useFocusEffect(
     useCallback(() => {
@@ -49,7 +52,7 @@ export default function LandingScreen() {
 
       const DocumentPicker = mod.default;
       const res = await DocumentPicker.pickSingle({
-        type: [DocumentPicker.types.allFiles],
+        type: ['application/epub+zip'], // EPUB MIME type
         copyTo: 'cachesDirectory',
         presentationStyle: 'fullScreen',
       });

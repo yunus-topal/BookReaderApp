@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import type { AppTheme } from '@theme/themes';
+import { spacing } from '@theme';
 
 const createStyles = (theme: AppTheme) => {
   const palette = theme.appPalette;
@@ -7,16 +8,16 @@ const createStyles = (theme: AppTheme) => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 16,
-      paddingTop: 32,
-      paddingBottom: 16,
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.xxl,
+      paddingBottom: spacing.lg,
       backgroundColor: palette.background,
     },
     topRow: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: 24,
+      marginBottom: spacing.xl,
     },
     title: {
       fontSize: 28,
@@ -24,8 +25,8 @@ const createStyles = (theme: AppTheme) => {
       color: palette.title,
     },
     pickBtn: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.sm,
       borderRadius: 999,
       backgroundColor: palette.primary,
       justifyContent: 'center',
@@ -45,8 +46,8 @@ const createStyles = (theme: AppTheme) => {
 
     // Optional shared styles if you want to reuse them
     sectionHeaderContainer: {
-      marginTop: 16,
-      marginBottom: 8,
+      marginTop: spacing.lg,
+      marginBottom: spacing.sm,
     },
     sectionHeaderTitle: {
       fontSize: 16,
@@ -61,9 +62,9 @@ const createStyles = (theme: AppTheme) => {
     // In case you want card-like backgrounds for ContinueCard / RecentList items
     card: {
       backgroundColor: palette.surface,
-      borderRadius: 12,
-      padding: 12,
-      marginBottom: 8,
+      borderRadius: spacing.md,
+      padding: spacing.md,
+      marginBottom: spacing.sm,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: palette.border,
     },
@@ -75,7 +76,7 @@ const createStyles = (theme: AppTheme) => {
     cardSubtitle: {
       color: palette.subtle,
       fontSize: 12,
-      marginTop: 2,
+      marginTop: spacing.xs,
     },
   });
 }

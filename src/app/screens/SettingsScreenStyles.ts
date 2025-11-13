@@ -1,10 +1,10 @@
 // src/screens/settingsScreenStyles.ts
 import { AppTheme } from '@theme/themes';
 import { StyleSheet } from 'react-native';
+import { spacing } from '@theme';
 
 const createStyles = (theme: AppTheme) => {
   const palette = theme.appPalette;
-
 
   return StyleSheet.create({
     root: {
@@ -12,20 +12,20 @@ const createStyles = (theme: AppTheme) => {
       backgroundColor: palette.background,
     },
     content: {
-      padding: 16,
+      padding: spacing.lg,
     },
     sectionTitle: {
-      marginBottom: 16,
+      marginBottom: spacing.lg,
     },
     groupContainer: {
-      marginBottom: 8,
+      marginBottom: spacing.sm,
     },
     groupLabel: {
-      marginBottom: 4,
+      marginBottom: spacing.xs,
       opacity: 0.7,
     },
     groupCard: {
-      borderRadius: 12,
+      borderRadius: spacing.md,
       overflow: 'hidden',
       borderWidth: 1,
       borderColor: palette.border,

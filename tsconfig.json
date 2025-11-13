@@ -17,7 +17,9 @@
     // B) if you want aliases, then ALSO configure Babel/Metro to match:
     "baseUrl": "src",
     "paths": {
+      "@theme": ["theme/index"],
       "@theme/*": ["theme/*"],
+      "@app": ["app"],
       "@app/*": ["app/*"]
     }
   }

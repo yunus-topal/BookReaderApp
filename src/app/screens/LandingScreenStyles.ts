@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import type { AppTheme } from '@theme/themes';
 
-function createLandingStyles(theme: AppTheme) {
+const createStyles = (theme: AppTheme) => {
   const palette = theme.appPalette;
 
   return StyleSheet.create({
@@ -80,4 +80,4 @@ function createLandingStyles(theme: AppTheme) {
   });
 }
 
-export default createLandingStyles;
+export default createStyles;

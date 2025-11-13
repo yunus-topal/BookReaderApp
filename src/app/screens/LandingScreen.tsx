@@ -11,13 +11,13 @@ import RecentList from '@app/components/RecentList';
 import { useRecentDocs } from '@app/hooks/useRecentDocs';
 import { addRecentDocument, openDocument } from '@app/services/documents';
 import { useCallback } from 'react';
-import createLandingStyles from './LandingScreenStyles';
+import createStyles from './LandingScreenStyles';
 import { useAppTheme } from '@theme/ThemeProvider';
 
-export default function LandingScreen() {
+const LandingScreen = () => {
   const { theme } = useAppTheme();
   const { recents, lastOpened, refresh } = useRecentDocs();
-  const styles = createLandingStyles(theme);
+  const styles = createStyles(theme);
 
   useFocusEffect(
     useCallback(() => {
@@ -114,3 +114,5 @@ function inferType(name: string): 'epub' | 'pdf' | 'txt' | 'unknown' {
   if (lower.endsWith('.txt')) return 'txt';
   return 'unknown';
 }
+
+export default LandingScreen;

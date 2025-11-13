@@ -36,18 +36,19 @@ export const palettes = {
 
   // 💚 EMERALD
   emeraldDark: {
-    background: '#020617',
-    surface: '#022c22',
-    surfaceSoft: '#064e3b',
+    background: '#03110d',      // deep green-black
+    surface: '#062019',         // dark emerald surface
+    surfaceSoft: '#0b3a2d',
     primary: '#10b981',
     primarySoft: '#34d399',
     title: '#ecfdf5',
     text: '#d1fae5',
     subtle: '#6b7280',
-    border: '#065f46',
+    border: '#064e3b',
     danger: '#fb7185',
     mode: 'dark' as const,
   },
+
   emeraldLight: {
     background: '#ecfdf5',
     surface: '#ffffff',

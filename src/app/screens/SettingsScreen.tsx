@@ -4,6 +4,7 @@ import { ScrollView, View } from 'react-native';
 import { Text, RadioButton, List, useTheme, Divider } from 'react-native-paper';
 import { useAppTheme } from '@theme/ThemeProvider';
 import type { AppThemeName } from '@theme/themes';
+import createStyles from './SettingsScreenStyles';
 
 const THEME_OPTIONS: { key: AppThemeName; label: string; group: string }[] = [
   { key: 'indigoDark', label: 'Indigo (Dark)', group: 'Indigo' },
@@ -15,8 +16,8 @@ const THEME_OPTIONS: { key: AppThemeName; label: string; group: string }[] = [
 ];
 
 const SettingsScreen: React.FC = () => {
-  const paperTheme = useTheme();
-  const { themeName, setThemeName } = useAppTheme();
+  const { theme, themeName, setThemeName } = useAppTheme();
+  const styles = createStyles(theme);
 
   const grouped = THEME_OPTIONS.reduce<Record<string, typeof THEME_OPTIONS>>(
     (acc, opt) => {
@@ -28,9 +29,9 @@ const SettingsScreen: React.FC = () => {
   );
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: paperTheme.colors.background }}>
-      <View style={{ padding: 16 }}>
-        <Text variant="titleMedium" style={{ marginBottom: 16 }}>
+    <ScrollView style={styles.root}>
+      <View style={styles.content}>
+        <Text variant="titleMedium" style={styles.sectionTitle}>
           Appearance
         </Text>
 
@@ -39,22 +40,12 @@ const SettingsScreen: React.FC = () => {
           onValueChange={(value) => setThemeName(value as AppThemeName)}
         >
           {Object.entries(grouped).map(([group, options]) => (
-            <View key={group} style={{ marginBottom: 8 }}>
-              <Text
-                variant="labelMedium"
-                style={{ marginBottom: 4, opacity: 0.7 }}
-              >
+            <View key={group} style={styles.groupContainer}>
+              <Text variant="labelMedium" style={styles.groupLabel}>
                 {group}
               </Text>
 
-              <View
-                style={{
-                  borderRadius: 12,
-                  overflow: 'hidden',
-                  borderWidth: 1,
-                  borderColor: paperTheme.colors.outline,
-                }}
-              >
+              <View style={styles.groupCard}>
                 {options.map((opt, index) => (
                   <React.Fragment key={opt.key}>
                     {index > 0 && <Divider />}

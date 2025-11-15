@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
-import type { AppTheme } from '@theme/themes';
-import { spacing } from '@theme';
+import { AppTheme, spacing } from '@theme';
 
 const createStyles = (theme: AppTheme) => {
   const palette = theme.appPalette;

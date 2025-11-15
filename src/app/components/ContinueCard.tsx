@@ -1,6 +1,7 @@
 import { View, Text, Pressable, Image } from 'react-native';
 import { DocumentMeta } from '@app/types';
-import styles from './ContinueCardStyles';
+import { useAppTheme } from '@theme/ThemeProvider';
+import createStyles from './ContinueCardStyles';
 
 interface Props {
   document?: DocumentMeta | null;
@@ -8,6 +9,9 @@ interface Props {
 }
 
 export default function ContinueCard({ document, onPress }: Props) {
+    const { theme } = useAppTheme();
+    const styles = createStyles(theme);
+
   if (!document) {
     return (
       <View style={[styles.card, styles.empty]}>

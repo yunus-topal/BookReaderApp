@@ -1,9 +1,10 @@
 // src/screens/settingsScreenStyles.ts
-import { AppTheme } from '@theme/themes';
 import { StyleSheet } from 'react-native';
 import { spacing } from '@theme';
+import { useAppTheme } from '@theme/ThemeProvider';
 
-const createStyles = (theme: AppTheme) => {
+const createStyles = () => {
+  const { theme } = useAppTheme();
   const palette = theme.appPalette;
 
   return StyleSheet.create({

@@ -12,12 +12,10 @@ import { useRecentDocs } from '@app/hooks/useRecentDocs';
 import { addRecentDocument, openDocument } from '@app/services/documents';
 import { useCallback } from 'react';
 import createStyles from './LandingScreenStyles';
-import { useAppTheme } from '@theme/ThemeProvider';
 
 const LandingScreen = () => {
-  const { theme } = useAppTheme();
   const { recents, lastOpened, refresh } = useRecentDocs();
-  const styles = createStyles(theme);
+  const styles = createStyles();
 
   useFocusEffect(
     useCallback(() => {

@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import styles from './SettingsScreenStyles';
+import styles from './VocabularyScreenStyles';
 
 export default function VocabularyScreen() {
   return (

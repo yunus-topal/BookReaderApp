@@ -6,7 +6,7 @@ import {
   View,
   Image,
 } from 'react-native';
-import styles from './RecentListStyles';
+import createStyles from './RecentListStyles';
 
 interface Props {
   data: DocumentMeta[];
@@ -14,6 +14,8 @@ interface Props {
 }
 
 export default function RecentList({ data, onPressItem }: Props) {
+  const styles = createStyles();
+    
   return (
     <FlatList
       data={data}

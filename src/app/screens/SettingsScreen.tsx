@@ -1,7 +1,7 @@
 // src/screens/SettingsScreen.tsx
 import React from 'react';
 import { ScrollView, View } from 'react-native';
-import { Text, RadioButton, List, useTheme, Divider } from 'react-native-paper';
+import { Text, RadioButton, List, Divider } from 'react-native-paper';
 import { useAppTheme } from '@theme/ThemeProvider';
 import type { AppThemeName } from '@theme/themes';
 import createStyles from './SettingsScreenStyles';
@@ -16,8 +16,8 @@ const THEME_OPTIONS: { key: AppThemeName; label: string; group: string }[] = [
 ];
 
 const SettingsScreen: React.FC = () => {
-  const { theme, themeName, setThemeName } = useAppTheme();
-  const styles = createStyles(theme);
+  const { themeName, setThemeName } = useAppTheme();
+  const styles = createStyles();
 
   const grouped = THEME_OPTIONS.reduce<Record<string, typeof THEME_OPTIONS>>(
     (acc, opt) => {

@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from 'react-native';
-import styles from './SectionHeaderStyles';
+import createStyles from './SectionHeaderStyles';
 
 interface Props {
   title: string;
@@ -8,6 +8,8 @@ interface Props {
 }
 
 export default function SectionHeader({ title, actionLabel, onAction }: Props) {
+  const styles = createStyles();
+  
   return (
     <View style={styles.row}>
       <Text style={styles.title}>{title}</Text>

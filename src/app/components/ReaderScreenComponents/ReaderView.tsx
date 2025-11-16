@@ -1,8 +1,10 @@
-import { DocumentMeta, ReaderPosition, ReaderSettings } from "@app/types";
-import React, { useImperativeHandle, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import { DocumentMeta, ReaderPosition, ReaderSettings } from '@app/types';
+import React, { useImperativeHandle } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Reader, useReader } from '@epubjs-react-native/core';
+import { useFileSystem } from '@epubjs-react-native/file-system';
 
-// If you want imperative controls from outside:
+
 export interface ReaderViewHandle {
   goToNext: () => void;
   goToPrev: () => void;
@@ -15,72 +17,62 @@ export interface ReaderViewProps {
   onPositionChange: (pos: ReaderPosition) => void;
 }
 
-
 export const ReaderView = React.forwardRef<ReaderViewHandle, ReaderViewProps>(
   ({ document, settings, position, onPositionChange }, ref) => {
-    const scrollRef = useRef<any>(null);
+    //console.log('FSModule =>', FSModule);
 
+    const { goNext, goPrevious } = useReader();
+
+    // Expose imperative controls to parent
     useImperativeHandle(ref, () => ({
       goToNext: () => {
-        if (settings.layoutMode === 'scroll') {
-          // Scroll down by viewport height
-          scrollRef.current?.scrollTo({
-            y: (scrollRef.current?._value ?? 0) + 400, // refine with layout measurements
-            animated: true,
-          });
-        } else {
-          // paged: call EPUB engine's "nextPage"
-          // epubViewRef.current?.nextPage();
-        }
+        // Let the EPUB engine handle paging/scroll jumps
+        goNext();
       },
       goToPrev: () => {
-        if (settings.layoutMode === 'scroll') {
-          scrollRef.current?.scrollTo({
-            y: Math.max((scrollRef.current?._value ?? 0) - 400, 0),
-            animated: true,
-          });
-        } else {
-          // epubViewRef.current?.prevPage();
-        }
+        goPrevious();
       },
     }));
 
-    // TODO: load EPUB from document.uri and render
+    const flow =
+      settings.layoutMode === 'scroll'
+        ? 'scrolled-doc'
+        : 'paginated'; // both supported by the lib :contentReference[oaicite:4]{index=4}
 
-    if (settings.layoutMode === 'scroll') {
-      return (
-        <View style={styles.container}>
-          {/* Replace with EPUB renderer output in a ScrollView */}
-          {/* Example with ScrollView to show concept */}
-          {/* <ScrollView
-            ref={scrollRef}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-          >
-            <EPUBScrollRenderer
-              uri={document.uri}
-              initialLocation={position.location}
-              onLocationChange={...}
-            />
-          </ScrollView> */}
-        </View>
+    const enableSwipe =
+      settings.layoutMode === 'paged' &&
+      ['swipe', 'swipeAndButtons', 'all'].includes(
+        settings.pageTurnControl,
       );
-    }
 
-    // Paged mode (swipe horizontally, each page screen-sized)
     return (
       <View style={styles.container}>
-        {/* For paged, use something like a FlatList horizontal paging,
-            or the EPUB lib's own paging widget */}
-        {/* <PagedEPUBRenderer
-          uri={document.uri}
-          initialLocation={position.location}
-          onLocationChange={...}
-          enableSwipe={['swipe','swipeAndButtons','all'].includes(settings.pageTurnControl)}
+        {/* <Reader
+          // Local epub/opf path from your DocumentMeta
+          src={document.uri}
+          fileSystem={useFileSystem}
+          flow={flow}
+          enableSwipe={enableSwipe}
+          enableSelection={true} // needed for future word selection
+          initialLocation={position?.location}
+          // onLocationChange={(epubCfi: string) => {
+          //   // You can later improve progressFraction using locations API
+          //   onPositionChange({
+          //     location: epubCfi,
+          //     progressFraction: position?.progressFraction ?? 0,
+          //   });
+          // }}
+          onSelected={(cfiRange, contents) => {
+            // Hook for text selection → translation
+            // You’ll get the CFI, you can use epub.js APIs / JS injection
+            // to get the selected text if you want, or rely on menuItems.
+          }}
+          // Later: map ReaderSettings to font size, theme, etc.
+          // defaultTheme={...}
         /> */}
       </View>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({

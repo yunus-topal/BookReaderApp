@@ -12,7 +12,7 @@ export type HomeStackParamList = {
 
 const Stack = createNativeStackNavigator<HomeStackParamList>();
 
-export function HomeStackNavigator() {
+function HomeStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Landing" component={LandingScreen} />
@@ -20,3 +20,5 @@ export function HomeStackNavigator() {
     </Stack.Navigator>
   );
 }
+
+export default HomeStackNavigator;

@@ -8,12 +8,13 @@ import { addRecentDocument, openDocument } from '@app/services/documents';
 import { useCallback } from 'react';
 import createStyles from './LandingScreenStyles';
 import { DocumentMeta } from '@app/types';
-import { HomeStackParamList } from '@app/navigation/HomeStack';
+import { HomeStackParamList } from '@app/navigation/HomeStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Landing'>;
 
 const LandingScreen: React.FC<Props> = ({ navigation }) => {
+
   const { recents, lastOpened, refresh } = useRecentDocs();
   const styles = createStyles();
 

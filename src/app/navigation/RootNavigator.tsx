@@ -2,9 +2,9 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
-import { HomeStackNavigator } from '@app/navigation/HomeStack';
 import SettingsScreen from '@app/screens/SettingsScreen';
 import VocabularyScreen from '@app/screens/VocabularyScreen';
+import HomeStackNavigator from './HomeStackNavigator';
 
 export type RootDrawerParamList = {
   Home: undefined;
@@ -15,6 +15,8 @@ export type RootDrawerParamList = {
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 
 export default function RootNavigator() {
+  console.log('ReaderViewModule =>', HomeStackNavigator);
+
   return (
     <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen

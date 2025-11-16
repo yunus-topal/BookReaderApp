@@ -4,11 +4,11 @@ import { View, StyleSheet } from 'react-native';
 import { ReaderPosition, ReaderSettings } from '@app/types';
 import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
 import { ReaderControlsBar } from '@app/components/ReaderScreenComponents/ReaderControlsBar';
-import { ReaderView } from '@app/components/ReaderScreenComponents/ReaderView';
-import { HomeStackParamList } from '@app/navigation/HomeStack';
+import { HomeStackParamList } from '@app/navigation/HomeStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Button, Text } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { useDocumentReadingState } from '@app/hooks/useDocumentReadingState';
+import { ReaderView } from '../components/ReaderScreenComponents/ReaderView';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Reader'>;
 

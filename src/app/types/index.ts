@@ -15,7 +15,7 @@ export interface DocumentMeta {
 export interface ReaderPosition {
   // This depends on your EPUB lib (CFI, spine index, etc).
   // Keep it generic for now:
-  location: string | null; // e.g. EPUB CFI, or "chapterId#offset"
+  location: string | undefined; // e.g. EPUB CFI, or "chapterId#offset"
   progressFraction: number; // 0..1 as in DocumentMeta.lastPosition
 }
 

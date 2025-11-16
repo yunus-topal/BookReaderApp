@@ -15,12 +15,11 @@
     "isolatedModules": true,
 
     // B) if you want aliases, then ALSO configure Babel/Metro to match:
-    "baseUrl": "src",
+    "baseUrl": ".", 
     "paths": {
-      "@theme": ["theme/index"],
-      "@theme/*": ["theme/*"],
-      "@app": ["app"],
-      "@app/*": ["app/*"]
+      "@app/*": ["src/app/*"],
+      "@theme/*": ["src/theme/*"],
+      "@theme": ["src/theme/index"]
     }
   }
 }

@@ -22,7 +22,7 @@ export function useDocumentReadingState(documentId: string | null) {
         const initial: DocumentReadingState = {
           documentId,
           position: {
-            location: null,
+            location: undefined,
             progressFraction: 0,
           },
         };

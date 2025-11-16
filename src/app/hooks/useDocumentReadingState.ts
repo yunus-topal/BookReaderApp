@@ -1,6 +1,7 @@
 // src/hooks/useDocumentReadingState.ts
 import { useCallback, useEffect, useState } from 'react';
 import type { DocumentReadingState, ReaderPosition } from '@app/types';
+import { getDocumentReadingState, setDocumentReadingState } from '@app/services/documents';
 
 export function useDocumentReadingState(documentId: string | null) {
   const [state, setState] = useState<DocumentReadingState | null>(null);
@@ -51,7 +52,7 @@ export function useDocumentReadingState(documentId: string | null) {
       // persist
       setIsSaving(true);
       try {
-        await updateDocumentReadingState(next);
+        await setDocumentReadingState(next);
       } finally {
         setIsSaving(false);
       }

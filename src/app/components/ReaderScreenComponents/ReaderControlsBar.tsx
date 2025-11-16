@@ -25,8 +25,8 @@ export const ReaderControlsBar: React.FC<Props> = ({
       {/* Left: page buttons (if enabled) */}
       {['buttons', 'swipeAndButtons', 'all'].includes(settings.pageTurnControl) && (
         <View style={styles.navButtons}>
-          <IconButton icon="chevron-left" onPress={onPrev} />
-          <IconButton icon="chevron-right" onPress={onNext} />
+          <IconButton icon="chevron-left" size={28} onPress={onPrev} />
+          <IconButton icon="chevron-right" size={28} onPress={onNext} />
         </View>
       )}
 

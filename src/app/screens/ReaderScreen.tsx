@@ -7,19 +7,16 @@ import { ReaderControlsBar } from '@app/components/ReaderScreenComponents/Reader
 import { ReaderView } from '@app/components/ReaderScreenComponents/ReaderView';
 import { HomeStackParamList } from '@app/navigation/HomeStack';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Button, Text } from 'react-native-paper';
+import { useDocumentReadingState } from '@app/hooks/useDocumentReadingState';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Reader'>;
 
 export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const { document } = route.params;
   const { settings, updateSettings, isLoaded } = useReaderSettings();
-  //const { updateDocumentMeta } = useDocumentsStore();
+  const { updatePosition, state } = useDocumentReadingState(document.id);
 
-
-  // const [position, setPosition] = useState<ReaderPosition>({
-  //   location: null,
-  //   progressFraction: document.lastPosition ?? 0,
-  // });
 
   const handleSettingsChange = useCallback(
     async (newSettings: Partial<ReaderSettings>) => {
@@ -28,28 +25,29 @@ export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
     [updateSettings]
   );
 
-  // const handlePositionChange = useCallback((pos: ReaderPosition) => {
-  //   setPosition(pos);
-  //   // Save last position to document meta
-  //   updateDocumentMeta(document.id, { lastPosition: pos.progressFraction });
-  // }, [document.id, updateDocumentMeta]);
+  const handlePositionChange = useCallback((pos: ReaderPosition) => {
+    // Save last position to document meta
+    updatePosition(pos);
+
+  }, [document.id, updatePosition]);
 
   return (
     <View style={styles.container}>
-      {/* <ReaderView
+      <Button>Test Button</Button>
+      <ReaderView
         document={document}
         settings={settings}
-        position={position}
+        position={state?.position}
         onPositionChange={handlePositionChange}
       />
-
-      <ReaderControlsBar
+      
+       <ReaderControlsBar
         settings={settings}
         onSettingsChange={handleSettingsChange}
         onPrev={() => {}}
         onNext={() => {}}
-        progress={position.progressFraction}
-      /> */}
+        progress={state?.position.progressFraction || 0}
+      />
     </View>
   );
 };

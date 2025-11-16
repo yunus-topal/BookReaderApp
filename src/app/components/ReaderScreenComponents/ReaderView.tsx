@@ -1,7 +1,6 @@
 import { DocumentMeta, ReaderPosition, ReaderSettings } from "@app/types";
 import React, { useImperativeHandle, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import { Props } from "react-native-paper";
 
 // If you want imperative controls from outside:
 export interface ReaderViewHandle {
@@ -12,12 +11,12 @@ export interface ReaderViewHandle {
 export interface ReaderViewProps {
   document: DocumentMeta;
   settings: ReaderSettings;
-  position: ReaderPosition;
+  position: ReaderPosition | undefined;
   onPositionChange: (pos: ReaderPosition) => void;
 }
 
 
-export const ReaderView = React.forwardRef<ReaderViewHandle, Props>(
+export const ReaderView = React.forwardRef<ReaderViewHandle, ReaderViewProps>(
   ({ document, settings, position, onPositionChange }, ref) => {
     const scrollRef = useRef<any>(null);
 

@@ -46,7 +46,7 @@ export async function getDocumentReadingState(documentId: string) {
   return allStates[documentId] || null;
 }
 
-export async function updateDocumentReadingState(state: { documentId: string; position: any }) {
+export async function setDocumentReadingState(state: { documentId: string; position: any }) {
   const allStates = await getJSON<Record<string, any>>(DOCUMENT_READING_STATES_KEY, {});
   allStates[state.documentId] = state;
   await setJSON(DOCUMENT_READING_STATES_KEY, allStates);

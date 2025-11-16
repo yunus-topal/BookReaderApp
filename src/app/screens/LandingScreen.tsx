@@ -1,9 +1,4 @@
-import {
-  View,
-  Text,
-  Pressable,
-  Alert,
-} from 'react-native';
+import { View, Text, Pressable, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import SectionHeader from '@app/components/SectionHeader';
 import ContinueCard from '@app/components/ContinueCard';
@@ -12,8 +7,13 @@ import { useRecentDocs } from '@app/hooks/useRecentDocs';
 import { addRecentDocument, openDocument } from '@app/services/documents';
 import { useCallback } from 'react';
 import createStyles from './LandingScreenStyles';
+import { DocumentMeta } from '@app/types';
+import { HomeStackParamList } from '@app/navigation/HomeStack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const LandingScreen = () => {
+type Props = NativeStackScreenProps<HomeStackParamList, 'Landing'>;
+
+const LandingScreen: React.FC<Props> = ({ navigation }) => {
   const { recents, lastOpened, refresh } = useRecentDocs();
   const styles = createStyles();
 
@@ -26,9 +26,7 @@ const LandingScreen = () => {
   const onPickDocument = useCallback(async () => {
     try {
       // Lazy import to avoid build errors if the native module isn't installed yet.
-      const mod = await import('react-native-document-picker').catch(
-        () => null,
-      );
+      const mod = await import('react-native-document-picker').catch(() => null);
       if (!mod) {
         Alert.alert(
           'Document Picker not installed',
@@ -73,10 +71,10 @@ const LandingScreen = () => {
     }
   }, [refresh]);
 
-  const onContinue = useCallback(async () => {
-    if (!lastOpened) return;
-    await openDocument(lastOpened);
-  }, [lastOpened]);
+  const handleOpen = async (doc: DocumentMeta) => {
+    await openDocument(doc); // persist "last opened"
+    navigation.navigate('Reader', { document: doc });
+  };
 
   return (
     <View style={styles.container}>
@@ -87,8 +85,12 @@ const LandingScreen = () => {
         </Pressable>
       </View>
 
-      <SectionHeader title="Continue reading" />
-      <ContinueCard document={lastOpened} onPress={onContinue} />
+      {lastOpened && (
+        <>
+          <SectionHeader title="Continue reading" />
+          <ContinueCard document={lastOpened} onPress={() => handleOpen(lastOpened)} />
+        </>
+      )}
 
       <SectionHeader
         title="Recent"
@@ -103,7 +105,7 @@ const LandingScreen = () => {
       <RecentList data={recents} onPressItem={openDocument} />
     </View>
   );
-}
+};
 
 function inferType(name: string): 'epub' | 'pdf' | 'txt' | 'unknown' {
   const lower = name.toLowerCase();

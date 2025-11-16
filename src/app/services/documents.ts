@@ -1,8 +1,10 @@
-import { DocumentMeta } from "@app/types";
-import { getJSON, setJSON } from "./storage";
+import { defaultSettings, DocumentMeta, ReaderSettings } from '@app/types';
+import { getJSON, setJSON } from './storage';
 
 const RECENTS_KEY = 'recents@v1';
 const LAST_OPENED_KEY = 'last_opened@v1';
+const READER_SETTINGS_KEY = 'reader_settings@v1';
+const DOCUMENT_READING_STATES_KEY = 'document_reading_states@v1';
 
 export async function addRecentDocument(doc: DocumentMeta) {
   const existing = await getJSON<DocumentMeta[]>(RECENTS_KEY, []);
@@ -28,4 +30,24 @@ export async function openDocument(doc: DocumentMeta) {
   // TODO: Wire to reader screen once implemented.
   await setJSON(LAST_OPENED_KEY, { ...doc, lastOpenedAt: Date.now() });
   // no-op for now
+}
+
+// implement get reader settings and set reader settings
+export async function getReaderSettings() {
+  return getJSON<ReaderSettings>(READER_SETTINGS_KEY, defaultSettings);
+}
+
+export async function setReaderSettings(settings: ReaderSettings) {
+  await setJSON(READER_SETTINGS_KEY, settings);
+}
+
+export async function getDocumentReadingState(documentId: string) {
+  const allStates = await getJSON<Record<string, any>>(DOCUMENT_READING_STATES_KEY, {});
+  return allStates[documentId] || null;
+}
+
+export async function updateDocumentReadingState(state: { documentId: string; position: any }) {
+  const allStates = await getJSON<Record<string, any>>(DOCUMENT_READING_STATES_KEY, {});
+  allStates[state.documentId] = state;
+  await setJSON(DOCUMENT_READING_STATES_KEY, allStates);
 }

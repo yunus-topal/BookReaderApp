@@ -10,11 +10,12 @@ import createStyles from './LandingScreenStyles';
 import { DocumentMeta } from '@app/types';
 import { HomeStackParamList } from '@app/navigation/HomeStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as RNFS from '@dr.pogodin/react-native-fs';
+import { DocumentPickerResponse } from 'react-native-document-picker';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Landing'>;
 
 const LandingScreen: React.FC<Props> = ({ navigation }) => {
-
   const { recents, lastOpened, refresh } = useRecentDocs();
   const styles = createStyles();
 
@@ -26,14 +27,12 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
 
   const onPickDocument = useCallback(async () => {
     try {
-      // Lazy import to avoid build errors if the native module isn't installed yet.
       const mod = await import('react-native-document-picker').catch(() => null);
       if (!mod) {
         Alert.alert(
           'Document Picker not installed',
           'Install react-native-document-picker to enable file picking. For now, a demo file will be added.',
         );
-        // Demo: add a fake document so UI can be tested.
         await addRecentDocument({
           id: String(Date.now()),
           name: 'Demo Book.epub',
@@ -49,15 +48,23 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
 
       const DocumentPicker = mod.default;
       const res = await DocumentPicker.pickSingle({
-        type: ['application/epub+zip'], // EPUB MIME type
+        type: ['application/epub+zip'],
         copyTo: 'cachesDirectory',
         presentationStyle: 'fullScreen',
+      });
+
+      const safeUri = await getSafeFileUri(res);
+
+      console.log('Picked URIs', {
+        uri: res.uri,
+        fileCopyUri: res.fileCopyUri,
+        safeUri,
       });
 
       await addRecentDocument({
         id: res.name + ':' + (res.size ?? 0),
         name: res.name ?? 'Document',
-        uri: res.fileCopyUri ?? res.uri,
+        uri: safeUri, // 👈 only this goes into DocumentMeta
         type: inferType(res.name ?? ''),
         coverUri: undefined,
         lastPosition: 0,
@@ -114,6 +121,30 @@ function inferType(name: string): 'epub' | 'pdf' | 'txt' | 'unknown' {
   if (lower.endsWith('.pdf')) return 'pdf';
   if (lower.endsWith('.txt')) return 'txt';
   return 'unknown';
+}
+
+async function getSafeFileUri(res: DocumentPickerResponse): Promise<string> {
+  const base = res.fileCopyUri ?? res.uri;
+
+  if (!base) {
+    throw new Error('Picker did not return a URI');
+  }
+
+  // We always copy into the app's documents dir
+  const fileName = res.name ?? `book-${Date.now()}.epub`;
+  const destPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+
+  console.log('Copying picked file', { from: base, to: destPath });
+
+  try {
+    await RNFS.copyFile(base, destPath);
+  } catch (err) {
+    console.log('RNFS.copyFile error', err);
+    throw err;
+  }
+
+  // Reader wants a file:// URI string
+  return `file://${destPath}`;
 }
 
 export default LandingScreen;

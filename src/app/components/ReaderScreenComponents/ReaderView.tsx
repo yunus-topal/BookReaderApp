@@ -1,13 +1,8 @@
 import { DocumentMeta, ReaderPosition, ReaderSettings } from '@app/types';
-import React, { useCallback, useImperativeHandle } from 'react';
+import React, { useCallback } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { Reader, useReader } from '@epubjs-react-native/core';
+import { Reader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
-
-export interface ReaderViewHandle {
-  goToNext: () => void;
-  goToPrev: () => void;
-}
 
 export interface ReaderViewProps {
   document: DocumentMeta;
@@ -17,20 +12,8 @@ export interface ReaderViewProps {
   onReadyChange?: (ready: boolean) => void;
 }
 
-export const ReaderView = React.forwardRef<ReaderViewHandle, ReaderViewProps>(
-  ({ document, settings, position, onPositionChange, onReadyChange }, ref) => {
-    const { goNext, goPrevious } = useReader();
-
-    // Expose imperative controls to parent
-    useImperativeHandle(ref, () => ({
-      goToNext: () => {
-        // Let the EPUB engine handle paging/scroll jumps
-        goNext();
-      },
-      goToPrev: () => {
-        goPrevious();
-      },
-    }));
+export const ReaderView: React.FC<ReaderViewProps> =
+  ({ document, settings, position, onPositionChange, onReadyChange }) => {
 
     const flow = settings.layoutMode === 'scroll' ? 'scrolled-doc' : 'paginated'; // both supported by the lib :contentReference[oaicite:4]{index=4}
 

@@ -1,53 +1,57 @@
 // src/screens/ReaderScreen.tsx
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ReaderPosition, ReaderSettings } from '@app/types';
 import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
 import { ReaderControlsBar } from '@app/components/ReaderScreenComponents/ReaderControlsBar';
 import { HomeStackParamList } from '@app/navigation/HomeStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Button } from 'react-native-paper';
 import { useDocumentReadingState } from '@app/hooks/useDocumentReadingState';
-import { ReaderView } from '../components/ReaderScreenComponents/ReaderView';
+import { ReaderView, ReaderViewHandle } from '../components/ReaderScreenComponents/ReaderView';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Reader'>;
 
 export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const { document } = route.params;
-  const { settings, updateSettings, isLoaded } = useReaderSettings();
+  const { settings, updateSettings } = useReaderSettings();
   const { updatePosition, state } = useDocumentReadingState(document.id);
+  const readerRef = useRef<ReaderViewHandle | null>(null);
+  const [isBookReady, setIsBookReady] = useState(false);
 
 
   const handleSettingsChange = useCallback(
     async (newSettings: Partial<ReaderSettings>) => {
       await updateSettings(newSettings);
     },
-    [updateSettings]
+    [updateSettings],
   );
 
-  const handlePositionChange = useCallback((pos: ReaderPosition) => {
-    // Save last position to document meta
-    updatePosition(pos);
-
-  }, [document.id, updatePosition]);
+  const handlePositionChange = useCallback(
+    (pos: ReaderPosition) => {
+      // Save last position to document meta
+      updatePosition(pos);
+    },
+    [updatePosition],
+  );
 
   return (
     <View style={styles.container}>
-      <Button>Test Button</Button>
       <ReaderView
+        ref={readerRef}
         document={document}
         settings={settings}
         position={state?.position}
         onPositionChange={handlePositionChange}
+        onReadyChange={setIsBookReady}
       />
-      
-       <ReaderControlsBar
-        settings={settings}
-        onSettingsChange={handleSettingsChange}
-        onPrev={() => {}}
-        onNext={() => {}}
-        progress={state?.position.progressFraction || 0}
-      />
+
+      {isBookReady && (
+        <ReaderControlsBar
+          settings={settings}
+          onSettingsChange={handleSettingsChange}
+          progress={state?.position.progressFraction || 0}
+        />
+      )}
     </View>
   );
 };

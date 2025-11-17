@@ -1,5 +1,5 @@
 import { DocumentMeta, ReaderPosition, ReaderSettings } from '@app/types';
-import React, { useImperativeHandle } from 'react';
+import React, { useCallback, useImperativeHandle } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { Reader, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
@@ -14,11 +14,11 @@ export interface ReaderViewProps {
   settings: ReaderSettings;
   position: ReaderPosition | undefined;
   onPositionChange: (pos: ReaderPosition) => void;
+  onReadyChange?: (ready: boolean) => void;
 }
 
 export const ReaderView = React.forwardRef<ReaderViewHandle, ReaderViewProps>(
-  ({ document, settings, position, onPositionChange }, ref) => {
-
+  ({ document, settings, position, onPositionChange, onReadyChange }, ref) => {
     const { goNext, goPrevious } = useReader();
 
     // Expose imperative controls to parent
@@ -38,7 +38,18 @@ export const ReaderView = React.forwardRef<ReaderViewHandle, ReaderViewProps>(
       settings.layoutMode === 'paged' &&
       ['swipe', 'swipeAndButtons', 'all'].includes(settings.pageTurnControl);
 
-    console.log('document.uri', document.uri);
+    const handleStarted = useCallback(() => {
+      onReadyChange?.(false);
+    }, [onReadyChange]);
+
+    const handleReady = useCallback(() => {
+      onReadyChange?.(true);
+    }, [onReadyChange]);
+
+    const handleDisplayError = useCallback(() => {
+      onReadyChange?.(false);
+    }, [onReadyChange]);
+
     return (
       <View style={styles.container}>
         <Reader
@@ -51,6 +62,13 @@ export const ReaderView = React.forwardRef<ReaderViewHandle, ReaderViewProps>(
           onSelected={(cfiRange, contents) => {
             // later
           }}
+          onLocationChange={(location, progressFraction) => {
+            //
+          }}
+          onStarted={handleStarted}
+          onReady={handleReady}
+          onDisplayError={handleDisplayError}
+
           renderLoadingFileComponent={({
             fileSize,
             downloadProgress,
@@ -64,17 +82,21 @@ export const ReaderView = React.forwardRef<ReaderViewHandle, ReaderViewProps>(
               downloadError,
               src: document.uri,
             });
+            const pct = Math.round((downloadProgress ?? 0) * 100);
 
             return (
               <View
                 style={{
                   flex: 1,
-                  alignItems: 'center',
                   justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: 16,
                 }}
               >
-                <ActivityIndicator />
-                <Text style={{ marginTop: 8 }}>Opening…</Text>
+                <ActivityIndicator size="large" />
+                <Text style={{ marginTop: 8 }}>
+                  {downloadSuccess ? 'Opening book…' : `Loading book… ${pct}%`}
+                </Text>
                 {downloadError && (
                   <Text style={{ marginTop: 8, color: 'red' }}>Error: {String(downloadError)}</Text>
                 )}

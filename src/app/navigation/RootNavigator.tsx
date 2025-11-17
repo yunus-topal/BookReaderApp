@@ -15,8 +15,6 @@ export type RootDrawerParamList = {
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 
 export default function RootNavigator() {
-  console.log('ReaderViewModule =>', HomeStackNavigator);
-
   return (
     <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen

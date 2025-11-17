@@ -110,7 +110,7 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
         }}
       />
 
-      <RecentList data={recents} onPressItem={openDocument} />
+      <RecentList data={recents} onPressItem={(doc: DocumentMeta) => handleOpen(doc)} />
     </View>
   );
 };

@@ -1,31 +1,52 @@
-import { DocumentMeta, locationToReaderPosition, ReaderPosition, ReaderSettings } from '@app/types';
-import React, { useCallback, useEffect, useState } from 'react';
+import {
+  DARK_THEME,
+  DocumentMeta,
+  LIGHT_THEME,
+  locationToReaderPosition,
+  ReaderPosition,
+  ReaderSettings,
+} from '@app/types';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Reader, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
-import { IconButton } from 'react-native-paper';
 import { ReaderControlsBar } from './ReaderControlsBar';
+import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
 
 export interface ReaderViewProps {
   document: DocumentMeta;
-  settings: ReaderSettings;
   position: ReaderPosition | undefined;
   onUserNavigate?: (pos: ReaderPosition) => void;
 }
 
-export const ReaderView: React.FC<ReaderViewProps> = ({
-  document,
-  settings,
-  position,
-  onUserNavigate,
-}) => {
-  const flow = settings.layoutMode === 'scroll' ? 'scrolled-doc' : 'paginated'; // both supported by the lib :contentReference[oaicite:4]{index=4}
-  const { goToLocation, goNext, goPrevious } = useReader();
+export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUserNavigate }) => {
+  const { settings, updateSettings } = useReaderSettings();
+  const { layoutMode, pageTurnControl } = settings;
+
+  const { goToLocation, goNext, goPrevious, changeTheme } = useReader();
   const [isReady, setIsReady] = useState(false);
   const [hasRestored, setHasRestored] = useState(false);
 
   const [controlsVisible, setControlsVisible] = useState(false);
   const [settingsExpanded, setSettingsExpanded] = useState(false);
+
+  const flow = layoutMode === 'scroll' ? 'scrolled' : 'paginated';
+  const enableSwipe =
+    pageTurnControl === 'swipe' ||
+    pageTurnControl === 'swipeAndButtons' ||
+    pageTurnControl === 'all';
+
+  const defaultThemeRef = useRef(settings.theme === 'dark' ? DARK_THEME : LIGHT_THEME);
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    if (settings.theme === 'dark') {
+      changeTheme(DARK_THEME);
+    } else {
+      changeTheme(LIGHT_THEME);
+    }
+  }, [settings.theme, isReady, changeTheme]);
 
   const toggleControls = () => {
     setControlsVisible(prev => {
@@ -36,10 +57,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
   };
 
   const toggleExpanded = () => setSettingsExpanded(prev => !prev);
-
-  const enableSwipe =
-    settings.layoutMode === 'paged' &&
-    ['swipe', 'swipeAndButtons', 'all'].includes(settings.pageTurnControl);
 
   useEffect(() => {
     setHasRestored(false);
@@ -74,12 +91,15 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
     setHasRestored(false);
   }, []);
 
+  console.log('ReaderView settings', settings);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <Reader
         src={document.uri}
         fileSystem={useFileSystem}
         flow={flow}
+        defaultTheme={defaultThemeRef.current}
         enableSwipe={enableSwipe}
         enableSelection
         onSelected={(cfiRange, contents) => {
@@ -130,10 +150,10 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
       <ReaderControlsBar
         visible={controlsVisible}
         expanded={settingsExpanded}
-        onToggleVisible={toggleControls}
         onToggleExpanded={toggleExpanded}
+        settings={settings}
+        updateSettings={updateSettings}
       />
-
     </View>
   );
 };

@@ -1,23 +1,22 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export type ReadingLayoutMode = 'paged' | 'scroll'; // maybe more later: 'two-page', etc.
 
-export type PageTurnControlMode =
-  | 'swipe'
-  | 'buttons'
-  | 'volumeButtons'
-  | 'swipeAndButtons'
-  | 'all';
+export type PageTurnControlMode = 'swipe' | 'buttons' | 'volumeButtons' | 'swipeAndButtons' | 'all';
+
+export type ReaderTheme = 'light' | 'dark';
 
 export interface ReaderSettings {
   layoutMode: ReadingLayoutMode;
   pageTurnControl: PageTurnControlMode;
+  theme: ReaderTheme;
   // future: fontSize, lineHeight, theme, margin, etc.
 }
 
-export const defaultSettings: ReaderSettings = {
+export const defaultReaderSettings: ReaderSettings = {
   layoutMode: 'paged',
-  pageTurnControl: 'swipeAndButtons',
+  pageTurnControl: 'swipe',
+  theme: 'light',
 };
 
 export interface ReaderSettingsContextValue {
@@ -38,5 +37,19 @@ export interface ReaderSettingsContextValue {
 }
 
 export const ReaderSettingsContext = createContext<ReaderSettingsContextValue | undefined>(
-  undefined
+  undefined,
 );
+
+export const DARK_THEME = {
+  body: {
+    background: '#000000',
+    color: '#ffffff',
+  },
+};
+
+export const LIGHT_THEME = {
+  body: {
+    background: '#ffffff',
+    color: '#000000',
+  },
+};

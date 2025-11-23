@@ -1,8 +1,7 @@
 // src/screens/ReaderScreen.tsx
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import { ReaderPosition, ReaderSettings } from '@app/types';
-import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
+import { ReaderPosition } from '@app/types';
 import { HomeStackParamList } from '@app/navigation/HomeStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDocumentReadingState } from '@app/hooks/useDocumentReadingState';
@@ -13,15 +12,7 @@ type Props = NativeStackScreenProps<HomeStackParamList, 'Reader'>;
 
 export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const { document } = route.params;
-  const { settings, updateSettings } = useReaderSettings();
   const { updatePosition, state, isLoading } = useDocumentReadingState(document.id);
-
-  const handleSettingsChange = useCallback(
-    async (newSettings: Partial<ReaderSettings>) => {
-      await updateSettings(newSettings);
-    },
-    [updateSettings],
-  );
 
   const handleUserNavigate = useCallback(
     (pos: ReaderPosition) => {
@@ -45,7 +36,6 @@ export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
       <ReaderView
         key={document.id}
         document={document}
-        settings={settings}
         position={state.position}
         onUserNavigate={handleUserNavigate}
       />

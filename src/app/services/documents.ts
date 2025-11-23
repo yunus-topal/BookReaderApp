@@ -1,4 +1,4 @@
-import { defaultSettings, DocumentMeta, ReaderSettings } from '@app/types';
+import { defaultReaderSettings, DocumentMeta, ReaderSettings } from '@app/types';
 import { getJSON, setJSON } from './storage';
 
 const RECENTS_KEY = 'recents@v1';
@@ -46,7 +46,9 @@ export async function openDocument(doc: DocumentMeta) {
 
 // implement get reader settings and set reader settings
 export async function getReaderSettings() {
-  return getJSON<ReaderSettings>(READER_SETTINGS_KEY, defaultSettings);
+  const settings = await getJSON<ReaderSettings | null>(READER_SETTINGS_KEY, null);
+  console.log('getReaderSettings', settings);
+  return getJSON<ReaderSettings>(READER_SETTINGS_KEY, defaultReaderSettings);
 }
 
 export async function setReaderSettings(settings: ReaderSettings) {

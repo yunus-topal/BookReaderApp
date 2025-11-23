@@ -1,9 +1,9 @@
-import { defaultSettings, ReaderSettings, ReaderSettingsContext } from "@app/types";
-import { PropsWithChildren, useState, useEffect, useCallback, useMemo, createContext } from "react";
+import { defaultReaderSettings, ReaderSettings, ReaderSettingsContext } from "@app/types";
+import { PropsWithChildren, useState, useEffect, useCallback, useMemo } from "react";
 import { getReaderSettings, setReaderSettings } from "@app/services/documents";
 
 export const ReaderSettingsProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const [settings, setSettingsState] = useState<ReaderSettings>(defaultSettings);
+  const [settings, setSettingsState] = useState<ReaderSettings>(defaultReaderSettings);
   const [isLoaded, setIsLoaded] = useState(false);
   
 
@@ -13,8 +13,8 @@ export const ReaderSettingsProvider: React.FC<PropsWithChildren> = ({ children }
 
     (async () => {
       try {
-        const stored = getReaderSettings();
-        if (isMounted) {
+        const stored = await getReaderSettings();
+        if (isMounted && stored) {
           setSettingsState((prev) => ({ ...prev, ...stored }));
         }
       } catch (e) {

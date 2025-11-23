@@ -5,6 +5,8 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import SettingsScreen from '@app/screens/SettingsScreen';
 import VocabularyScreen from '@app/screens/VocabularyScreen';
 import HomeStackNavigator from './HomeStackNavigator';
+import { useAppTheme } from '@theme/ThemeProvider';
+import { createRootNavigatorScreenOptions, createRootNavigatorSceneStyle } from './RootNavigatorStyles';
 
 export type RootDrawerParamList = {
   Home: undefined;
@@ -15,18 +17,24 @@ export type RootDrawerParamList = {
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 
 export default function RootNavigator() {
+  const { theme } = useAppTheme();
+  const palette = theme.appPalette;
+
+  const screenOptions = createRootNavigatorScreenOptions(palette);
+
   return (
-    <Drawer.Navigator initialRouteName="Home">
+    <Drawer.Navigator
+      initialRouteName="Home"
+      screenOptions={screenOptions}
+    >
       <Drawer.Screen
         name="Home"
         component={HomeStackNavigator}
         options={({ route }) => {
-          // Find which screen in HomeStack is focused (Landing or Reader)
           const routeName = getFocusedRouteNameFromRoute(route) ?? 'Landing';
           const isReader = routeName === 'Reader';
 
           return {
-            // Show drawer header (with hamburger) only when NOT on Reader
             headerShown: !isReader,
             title: 'Library',
           };

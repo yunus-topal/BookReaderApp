@@ -1,0 +1,21 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Lora-Regular.ttf",
+      "sha1": "3abe3b6dde4dd5e70c75073de9aad0da658e651d"
+    },
+    {
+      "path": "assets/fonts/MedievalSharp-Regular.ttf",
+      "sha1": "2aa66be87b648c3e4ca7983c440e1f009b092ee6"
+    },
+    {
+      "path": "assets/fonts/Roboto-Regular.ttf",
+      "sha1": "6bd9646ab22c0301ce3adbfe8707213a67900404"
+    },
+    {
+      "path": "assets/fonts/Schoolbell-Regular.ttf",
+      "sha1": "d7e91ce8f32d168643511405072e201bad2b6038"
+    }
+  ]
+}

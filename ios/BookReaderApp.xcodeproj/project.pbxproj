@@ -11,6 +11,10 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		69C8119BC1C444A99BA5FACD /* MedievalSharp-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD016A9D9C044F9AAF5FC37 /* MedievalSharp-Regular.ttf */; };
+		59FFBF5A0D2A4DD586435B07 /* Schoolbell-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5398CA620D2B4888B303636B /* Schoolbell-Regular.ttf */; };
+		42705E62CFD1459FAAEE43D0 /* Lora-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7696C3037050484FA8F8F9FA /* Lora-Regular.ttf */; };
+		821DC39CDEE6429BA5BBA147 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D1A9CD4EE46C44E4A148196D /* Roboto-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +28,10 @@
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = BookReaderApp/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BookReaderApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		4BD016A9D9C044F9AAF5FC37 /* MedievalSharp-Regular.ttf */ = {isa = PBXFileReference; name = "MedievalSharp-Regular.ttf"; path = "../assets/fonts/MedievalSharp-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5398CA620D2B4888B303636B /* Schoolbell-Regular.ttf */ = {isa = PBXFileReference; name = "Schoolbell-Regular.ttf"; path = "../assets/fonts/Schoolbell-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7696C3037050484FA8F8F9FA /* Lora-Regular.ttf */ = {isa = PBXFileReference; name = "Lora-Regular.ttf"; path = "../assets/fonts/Lora-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D1A9CD4EE46C44E4A148196D /* Roboto-Regular.ttf */ = {isa = PBXFileReference; name = "Roboto-Regular.ttf"; path = "../assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +82,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				E49516187AD240BA8115390E /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -96,6 +105,18 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		E49516187AD240BA8115390E /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				4BD016A9D9C044F9AAF5FC37 /* MedievalSharp-Regular.ttf */,
+				5398CA620D2B4888B303636B /* Schoolbell-Regular.ttf */,
+				7696C3037050484FA8F8F9FA /* Lora-Regular.ttf */,
+				D1A9CD4EE46C44E4A148196D /* Roboto-Regular.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -159,6 +180,10 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				69C8119BC1C444A99BA5FACD /* MedievalSharp-Regular.ttf in Resources */,
+				59FFBF5A0D2A4DD586435B07 /* Schoolbell-Regular.ttf in Resources */,
+				42705E62CFD1459FAAEE43D0 /* Lora-Regular.ttf in Resources */,
+				821DC39CDEE6429BA5BBA147 /* Roboto-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

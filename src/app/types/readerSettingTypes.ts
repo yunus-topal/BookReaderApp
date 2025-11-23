@@ -6,17 +6,25 @@ export type PageTurnControlMode = 'swipe' | 'buttons' | 'volumeButtons' | 'swipe
 
 export type ReaderTheme = 'light' | 'dark';
 
+export type ReaderFontFamily = 'lora' | 'roboto' | 'courier' | 'handwriting' | 'medieval';
+export type ReaderFontSize = 'small' | 'medium' | 'large';
+
 export interface ReaderSettings {
   layoutMode: ReadingLayoutMode;
   pageTurnControl: PageTurnControlMode;
   theme: ReaderTheme;
   // future: fontSize, lineHeight, theme, margin, etc.
+
+  fontFamily: ReaderFontFamily;
+  fontSize: ReaderFontSize;
 }
 
 export const defaultReaderSettings: ReaderSettings = {
   layoutMode: 'paged',
   pageTurnControl: 'swipe',
   theme: 'light',
+  fontFamily: 'lora',
+  fontSize: 'medium',
 };
 
 export interface ReaderSettingsContextValue {

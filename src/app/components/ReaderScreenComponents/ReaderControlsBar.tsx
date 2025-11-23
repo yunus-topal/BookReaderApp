@@ -10,10 +10,23 @@ interface Props {
   updateSettings: (patch: Partial<ReaderSettings>) => void;
 }
 
-export function ReaderControlsBar({ visible, expanded, onToggleExpanded, settings, updateSettings }: Props) {
+const FONT_OPTIONS: { key: ReaderSettings['fontFamily']; previewFamily: string }[] = [
+  { key: 'lora',        previewFamily: 'Lora-Regular' },
+  { key: 'roboto',      previewFamily: 'Roboto-Regular' },
+  { key: 'courier',     previewFamily: 'Courier' },             // system mono
+  { key: 'handwriting', previewFamily: 'Schoolbell-Regular' },
+  { key: 'medieval',    previewFamily: 'MedievalSharp-Regular' },
+];
 
+export function ReaderControlsBar({
+  visible,
+  expanded,
+  onToggleExpanded,
+  settings,
+  updateSettings,
+}: Props) {
   if (!visible) return null;
-  const { theme, layoutMode } = settings;
+  const { theme, layoutMode, fontFamily, fontSize } = settings;
 
   return (
     <View style={styles.container}>
@@ -52,31 +65,59 @@ export function ReaderControlsBar({ visible, expanded, onToggleExpanded, setting
               </Pressable>
             </View>
           </View>
-
-          {/* LAYOUT ROW */}
+          {/* FONT FAMILY ROW */}
           <View style={styles.row}>
-            <Text style={styles.label}>Layout</Text>
+            <Text style={styles.label}>Font</Text>
+            <View style={styles.fontRow}>
+              {FONT_OPTIONS.map(opt => (
+                <Pressable
+                  key={opt.key}
+                  style={[styles.fontChip, fontFamily === opt.key && styles.fontChipActive]}
+                  onPress={() => updateSettings({ fontFamily: opt.key })}
+                >
+                  <Text
+                    style={[
+                      styles.fontSample,
+                      { fontFamily: opt.previewFamily },
+                      fontFamily === opt.key && styles.fontSampleActive,
+                    ]}
+                  >
+                    Aa
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+          {/* FONT SIZE ROW */}
+          <View style={styles.row}>
+            <Text style={styles.label}>Text size</Text>
             <View style={styles.chipRow}>
               <Pressable
-                style={[styles.chip, layoutMode === 'paged' && styles.chipActive]}
-                onPress={() => updateSettings({ layoutMode: 'paged' })}
+                style={[styles.chip, fontSize === 'small' && styles.chipActive]}
+                onPress={() => updateSettings({ fontSize: 'small' })}
               >
-                <Text style={[styles.chipText, layoutMode === 'paged' && styles.chipTextActive]}>
-                  Pages
+                <Text style={[styles.chipText, fontSize === 'small' && styles.chipTextActive]}>
+                  Small
                 </Text>
               </Pressable>
               <Pressable
-                style={[styles.chip, layoutMode === 'scroll' && styles.chipActive]}
-                onPress={() => updateSettings({ layoutMode: 'scroll' })}
+                style={[styles.chip, fontSize === 'medium' && styles.chipActive]}
+                onPress={() => updateSettings({ fontSize: 'medium' })}
               >
-                <Text style={[styles.chipText, layoutMode === 'scroll' && styles.chipTextActive]}>
-                  Scroll
+                <Text style={[styles.chipText, fontSize === 'medium' && styles.chipTextActive]}>
+                  Medium
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[styles.chip, fontSize === 'large' && styles.chipActive]}
+                onPress={() => updateSettings({ fontSize: 'large' })}
+              >
+                <Text style={[styles.chipText, fontSize === 'large' && styles.chipTextActive]}>
+                  Large
                 </Text>
               </Pressable>
             </View>
           </View>
-
-          {/* later: font size, line height, etc */}
         </View>
       )}
     </View>
@@ -141,5 +182,32 @@ const styles = StyleSheet.create({
   chipTextActive: {
     color: '#111827',
     fontWeight: '600',
+  },
+  fontRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    justifyContent: 'flex-end',
+  },
+  fontChip: {
+    width: 40,
+    height: 40,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#4b5563',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fontChipActive: {
+    backgroundColor: '#e5e7eb',
+    borderColor: '#e5e7eb',
+  },
+  fontSample: {
+    fontSize: 20,
+    color: '#e5e7eb',
+  },
+  fontSampleActive: {
+    color: '#111827',
+    fontWeight: '700',
   },
 });

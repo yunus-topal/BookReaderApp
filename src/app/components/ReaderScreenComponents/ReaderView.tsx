@@ -6,7 +6,7 @@ import {
   ReaderPosition,
   ReaderSettings,
 } from '@app/types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Reader, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
@@ -18,6 +18,23 @@ export interface ReaderViewProps {
   position: ReaderPosition | undefined;
   onUserNavigate?: (pos: ReaderPosition) => void;
 }
+
+const fontFamilyForSettings = (font: ReaderSettings['fontFamily']) => {
+  switch (font) {
+    case 'lora':
+      return 'Lora-Regular';
+    case 'roboto':
+      return 'Roboto-Regular';
+    case 'courier':
+      return 'Courier';
+    case 'handwriting':
+      return 'Schoolbell-Regular';
+    case 'medieval':
+      return 'MedievalSharp-Regular';
+    default:
+      return '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+  }
+};
 
 export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUserNavigate }) => {
   const { settings, updateSettings } = useReaderSettings();
@@ -36,17 +53,32 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
     pageTurnControl === 'swipeAndButtons' ||
     pageTurnControl === 'all';
 
-  const defaultThemeRef = useRef(settings.theme === 'dark' ? DARK_THEME : LIGHT_THEME);
+  const buildThemeFromSettings = (settings: ReaderSettings) => {
+    const base = settings.theme === 'dark' ? DARK_THEME : LIGHT_THEME;
+
+    const fontFamily = fontFamilyForSettings(settings.fontFamily);
+
+    const fontSize =
+      settings.fontSize === 'small' ? '90%' : settings.fontSize === 'large' ? '115%' : '100%';
+
+    return {
+      ...base,
+      body: {
+        ...(base.body || {}),
+        'font-family': fontFamily,
+        'font-size': fontSize,
+      },
+    };
+  };
+
+  const defaultThemeRef = useRef(buildThemeFromSettings(settings));
 
   useEffect(() => {
     if (!isReady) return;
 
-    if (settings.theme === 'dark') {
-      changeTheme(DARK_THEME);
-    } else {
-      changeTheme(LIGHT_THEME);
-    }
-  }, [settings.theme, isReady, changeTheme]);
+    const theme = buildThemeFromSettings(settings);
+    changeTheme(theme);
+  }, [isReady, settings.theme, settings.fontFamily, settings.fontSize, changeTheme]);
 
   const toggleControls = () => {
     setControlsVisible(prev => {

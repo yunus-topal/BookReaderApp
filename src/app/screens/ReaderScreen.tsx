@@ -7,10 +7,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDocumentReadingState } from '@app/hooks/useDocumentReadingState';
 import { ReaderView } from '../components/ReaderScreenComponents/ReaderView';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'Reader'>;
 
-export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
+export const ReaderScreen: React.FC<Props> = ({ route }) => {
+  const { settings } = useReaderSettings();
   const { document } = route.params;
   const { updatePosition, state, isLoading } = useDocumentReadingState(document.id);
 
@@ -31,8 +33,9 @@ export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   }
   //console.log('Rendering ReaderScreen with position:', state);
 
+  const safeAreaBg = settings.theme === 'dark' ? '#000' : '#fff';
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: safeAreaBg }]}>
       <ReaderView
         key={document.id}
         document={document}

@@ -4,7 +4,7 @@ import SectionHeader from '@app/components/SectionHeader';
 import ContinueCard from '@app/components/ContinueCard';
 import RecentList from '@app/components/RecentList';
 import { useRecentDocs } from '@app/hooks/useRecentDocs';
-import { addRecentDocument, openDocument } from '@app/services/documents';
+import { addRecentDocument, deleteRecentDocument, openDocument } from '@app/services/documents';
 import { useCallback } from 'react';
 import createStyles from './LandingScreenStyles';
 import { DocumentMeta } from '@app/types';
@@ -24,6 +24,12 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
       refresh();
     }, [refresh]),
   );
+
+  const handleDeleteRecent = useCallback(async (doc: DocumentMeta) => {
+    await deleteRecentDocument(doc.id);
+    // optimistic UI update
+    refresh();
+  }, []);
 
   const onPickDocument = useCallback(async () => {
     try {
@@ -64,7 +70,7 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
       await addRecentDocument({
         id: res.name + ':' + (res.size ?? 0),
         name: res.name ?? 'Document',
-        uri: safeUri, // 👈 only this goes into DocumentMeta
+        uri: safeUri, 
         type: inferType(res.name ?? ''),
         coverUri: undefined,
         lastPosition: 0,
@@ -110,7 +116,7 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
         }}
       />
 
-      <RecentList data={recents} onPressItem={(doc: DocumentMeta) => handleOpen(doc)} />
+      <RecentList data={recents} onPressItem={(doc: DocumentMeta) => handleOpen(doc)} onDeleteItem={handleDeleteRecent}/>
     </View>
   );
 };

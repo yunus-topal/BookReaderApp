@@ -6,7 +6,7 @@ import SettingsScreen from '@app/screens/SettingsScreen';
 import VocabularyScreen from '@app/screens/VocabularyScreen';
 import HomeStackNavigator from './HomeStackNavigator';
 import { useAppTheme } from '@theme/ThemeProvider';
-import { createRootNavigatorScreenOptions, createRootNavigatorSceneStyle } from './RootNavigatorStyles';
+import { createRootNavigatorScreenOptions } from './RootNavigatorStyles';
 
 export type RootDrawerParamList = {
   Home: undefined;

@@ -45,6 +45,22 @@ const createStyles = () => {
       textAlign: 'center',
       marginTop: spacing.xl,
     },
+
+    deleteButton: {
+      flexDirection: 'row',
+      gap: spacing.md,
+      backgroundColor: palette.danger,
+      padding: spacing.md,
+      borderRadius: spacing.lg,
+      alignItems: 'center',
+      marginBottom: spacing.sm,
+    },
+
+    deleteLabel: {
+      color: 'white',
+      fontWeight: '600',
+    },
+
   });
 }
 

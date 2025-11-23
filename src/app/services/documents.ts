@@ -14,6 +14,18 @@ export async function addRecentDocument(doc: DocumentMeta) {
   await setJSON(LAST_OPENED_KEY, doc);
 }
 
+export async function deleteRecentDocument(documentId: string) {
+  const existing = await getJSON<DocumentMeta[]>(RECENTS_KEY, []);
+  const recents = existing.filter(d => d.id !== documentId);
+  await setJSON(RECENTS_KEY, recents);
+
+  // Optional: clear last opened if it was this doc
+  const lastOpened = await getJSON<DocumentMeta | null>(LAST_OPENED_KEY, null);
+  if (lastOpened && lastOpened.id === documentId) {
+    await setJSON(LAST_OPENED_KEY, null as any);
+  }
+}
+
 export async function getRecents() {
   return getJSON<DocumentMeta[]>(RECENTS_KEY, []);
 }

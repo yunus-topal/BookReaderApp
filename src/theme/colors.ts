@@ -17,7 +17,7 @@ export const palettes = {
     text: '#cbd5f5',
     subtle: '#9ca3af',
     border: '#1f2937',
-    danger: '#f97373',
+    danger: '#b91c1c',
     mode: 'dark' as const,
   },
   indigoLight: {
@@ -45,7 +45,7 @@ export const palettes = {
     text: '#d1fae5',
     subtle: '#6b7280',
     border: '#064e3b',
-    danger: '#fb7185',
+    danger: '#b91c1c',
     mode: 'dark' as const,
   },
 
@@ -74,7 +74,7 @@ export const palettes = {
     text: '#fde68a',
     subtle: '#d1d5db',
     border: '#4b2c18',
-    danger: '#f87171',
+    danger: '#b91c1c',
     mode: 'dark' as const,
   },
   sepiaLight: {

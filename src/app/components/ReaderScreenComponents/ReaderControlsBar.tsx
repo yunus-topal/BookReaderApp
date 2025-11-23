@@ -1,10 +1,9 @@
 // src/reader/ReaderControlsBar.tsx
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, IconButton, Text } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 import { spacing } from '@theme';
-import { locationToReaderPosition, ReaderPosition, ReaderSettings } from '@app/types';
-import { useReader } from '@epubjs-react-native/core';
+import { ReaderSettings } from '@app/types';
 
 interface Props {
   settings: ReaderSettings;
@@ -17,17 +16,9 @@ export const ReaderControlsBar: React.FC<Props> = ({
   onSettingsChange,
   progress,
 }) => {
-    const { goNext, goPrevious } = useReader();
   
   return (
     <View style={styles.container}>
-      {/* Left: page buttons (if enabled) */}
-      {['buttons', 'swipeAndButtons', 'all'].includes(settings.pageTurnControl) && (
-        <View style={styles.navButtons}>
-          <IconButton icon="chevron-left" size={28} onPress={goPrevious} />
-          <IconButton icon="chevron-right" size={28} onPress={goNext} />
-        </View>
-      )}
 
       {/* Center: progress */}
       <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>

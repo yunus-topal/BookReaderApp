@@ -1,6 +1,6 @@
 import { DocumentMeta, locationToReaderPosition, ReaderPosition, ReaderSettings } from '@app/types';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Location, Reader, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
 
@@ -20,7 +20,7 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
   onUserNavigate,
 }) => {
   const flow = settings.layoutMode === 'scroll' ? 'scrolled-doc' : 'paginated'; // both supported by the lib :contentReference[oaicite:4]{index=4}
-  const { goToLocation, getCurrentLocation } = useReader();
+  const { goToLocation, getCurrentLocation, goNext, goPrevious } = useReader();
   const [isReady, setIsReady] = useState(false);
   const [hasRestored, setHasRestored] = useState(false);
 
@@ -97,25 +97,43 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
           const pct = Math.round((downloadProgress ?? 0) * 100);
 
           return (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: 16,
-              }}
-            >
+            <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" />
-              <Text style={{ marginTop: 8 }}>
+              <Text style={styles.loadingText}>
                 {downloadSuccess ? 'Opening book…' : `Loading book… ${pct}%`}
               </Text>
               {downloadError && (
-                <Text style={{ marginTop: 8, color: 'red' }}>Error: {String(downloadError)}</Text>
+                <Text style={styles.loadingError}>Error: {String(downloadError)}</Text>
               )}
             </View>
           );
         }}
       />
+
+      {/* Tap-zones overlay */}
+      <View
+        pointerEvents="box-none"
+        style={StyleSheet.absoluteFill}
+      >
+        <View style={styles.tapRow}>
+          <Pressable
+            style={styles.tapLeft}
+            onPress={() => goPrevious?.()}
+          />
+          <Pressable
+            style={styles.tapCenter}
+            // optional: toggle controls, nothing, etc.
+            onPress={() => {
+              // e.g. toggle controls bar
+            }}
+          />
+          <Pressable
+            style={styles.tapRight}
+            onPress={() => goNext?.()}
+          />
+        </View>
+      </View>
+      
     </View>
   );
 };
@@ -123,4 +141,32 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  loadingText: {
+    marginTop: 8,
+  },
+  loadingError: {
+    marginTop: 8,
+    color: 'red',
+  },
+
+  tapRow: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  tapLeft: {
+    flex: 3,        // ~30%
+  },
+  tapCenter: {
+    flex: 4,        // ~40%
+  },
+  tapRight: {
+    flex: 3,        // ~30%
+  },
 });

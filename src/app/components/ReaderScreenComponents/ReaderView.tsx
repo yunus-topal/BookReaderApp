@@ -1,96 +1,125 @@
-import { DocumentMeta, ReaderPosition, ReaderSettings } from '@app/types';
-import React, { useCallback } from 'react';
+import { DocumentMeta, locationToReaderPosition, ReaderPosition, ReaderSettings } from '@app/types';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { Reader } from '@epubjs-react-native/core';
+import { Location, Reader, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
 
 export interface ReaderViewProps {
   document: DocumentMeta;
   settings: ReaderSettings;
   position: ReaderPosition | undefined;
-  onPositionChange: (pos: ReaderPosition) => void;
   onReadyChange?: (ready: boolean) => void;
+  onUserNavigate?: (pos: ReaderPosition) => void; 
 }
 
-export const ReaderView: React.FC<ReaderViewProps> =
-  ({ document, settings, position, onPositionChange, onReadyChange }) => {
+export const ReaderView: React.FC<ReaderViewProps> = ({
+  document,
+  settings,
+  position,
+  onReadyChange,
+  onUserNavigate,
+}) => {
+  const flow = settings.layoutMode === 'scroll' ? 'scrolled-doc' : 'paginated'; // both supported by the lib :contentReference[oaicite:4]{index=4}
+  const { goToLocation, getCurrentLocation } = useReader();
+  const [isReady, setIsReady] = useState(false);
+  const [hasRestored, setHasRestored] = useState(false);
 
-    const flow = settings.layoutMode === 'scroll' ? 'scrolled-doc' : 'paginated'; // both supported by the lib :contentReference[oaicite:4]{index=4}
+  const enableSwipe =
+    settings.layoutMode === 'paged' &&
+    ['swipe', 'swipeAndButtons', 'all'].includes(settings.pageTurnControl);
 
-    const enableSwipe =
-      settings.layoutMode === 'paged' &&
-      ['swipe', 'swipeAndButtons', 'all'].includes(settings.pageTurnControl);
+  useEffect(() => {
+    setHasRestored(false);
+    setIsReady(false);
+  }, [document.id]);
 
-    const handleStarted = useCallback(() => {
-      onReadyChange?.(false);
-    }, [onReadyChange]);
+  const handleStarted = useCallback(() => {
+    onReadyChange?.(false);
+    setIsReady(false);
+    setHasRestored(false);
+  }, [onReadyChange]);
 
-    const handleReady = useCallback(() => {
-      onReadyChange?.(true);
-    }, [onReadyChange]);
+  const handleReady = useCallback(() => {
+    onReadyChange?.(true);
+    setIsReady(true);
+    console.log('Reader is ready');
+  }, [onReadyChange]);
 
-    const handleDisplayError = useCallback(() => {
-      onReadyChange?.(false);
-    }, [onReadyChange]);
+  useEffect(() => {
+    if (!isReady || hasRestored) return;
 
-    return (
-      <View style={styles.container}>
-        <Reader
-          src={document.uri}
-          fileSystem={useFileSystem}
-          flow={flow}
-          enableSwipe={enableSwipe}
-          enableSelection
-          initialLocation={position?.location}
-          onSelected={(cfiRange, contents) => {
-            // later
-          }}
-          onLocationChange={(location, progressFraction) => {
-            //
-          }}
-          onStarted={handleStarted}
-          onReady={handleReady}
-          onDisplayError={handleDisplayError}
+    if (position?.epubCfi) {
+      console.log('Restoring to saved position', position.epubCfi);
+      setHasRestored(true);
+      goToLocation(position.epubCfi);
+    } else {
+      // Nothing to restore, but we still mark as done so normal tracking can start
+      setHasRestored(true);
+    }
+  }, [isReady, hasRestored, position?.epubCfi, goToLocation]);
 
-          renderLoadingFileComponent={({
-            fileSize,
-            downloadProgress,
-            downloadSuccess,
-            downloadError,
-          }) => {
-            console.log('EPUB loading state', {
-              fileSize,
-              downloadProgress,
-              downloadSuccess,
-              downloadError,
-              src: document.uri,
-            });
-            const pct = Math.round((downloadProgress ?? 0) * 100);
+  const handleDisplayError = useCallback(() => {
+    onReadyChange?.(false);
+    setIsReady(false);
+    setHasRestored(false);
+  }, [onReadyChange]);
+  
+  return (
+    <View style={styles.container}>
+      <Reader
+        src={document.uri}
+        fileSystem={useFileSystem}
+        flow={flow}
+        enableSwipe={enableSwipe}
+        enableSelection
+        onSelected={(cfiRange, contents) => {
+          // later
+        }}
 
-            return (
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: 16,
-                }}
-              >
-                <ActivityIndicator size="large" />
-                <Text style={{ marginTop: 8 }}>
-                  {downloadSuccess ? 'Opening book…' : `Loading book… ${pct}%`}
-                </Text>
-                {downloadError && (
-                  <Text style={{ marginTop: 8, color: 'red' }}>Error: {String(downloadError)}</Text>
-                )}
-              </View>
-            );
-          }}
-        />
-      </View>
-    );
-  },
-);
+        onLocationChange={(_, currentLocation) => {
+          const nextPos = locationToReaderPosition(currentLocation);
+
+          if (!hasRestored && position?.epubCfi) {
+            return;
+          }
+          onUserNavigate?.(nextPos);
+        }}
+
+        onStarted={handleStarted}
+        onReady={handleReady}
+        onDisplayError={handleDisplayError}
+        renderLoadingFileComponent={({
+          fileSize,
+          downloadProgress,
+          downloadSuccess,
+          downloadError,
+        }) => {
+          const pct = Math.round((downloadProgress ?? 0) * 100);
+
+          return (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 16,
+              }}
+            >
+              <ActivityIndicator size="large" />
+              <Text style={{ marginTop: 8 }}>
+                {downloadSuccess ? 'Opening book…' : `Loading book… ${pct}%`}
+              </Text>
+              {downloadError && (
+                <Text style={{ marginTop: 8, color: 'red' }}>Error: {String(downloadError)}</Text>
+              )}
+            </View>
+          );
+        }}
+      />
+    </View>
+  );
+};
+
 
 const styles = StyleSheet.create({
   container: { flex: 1 },

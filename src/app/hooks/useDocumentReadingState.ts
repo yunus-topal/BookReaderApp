@@ -14,7 +14,7 @@ export function useDocumentReadingState(documentId: string | null) {
     setIsLoading(true);
     try {
       const existing = await getDocumentReadingState(documentId);
-
+      //console.log('Loaded document reading state', existing);
       if (existing) {
         setState(existing);
       } else {
@@ -22,8 +22,11 @@ export function useDocumentReadingState(documentId: string | null) {
         const initial: DocumentReadingState = {
           documentId,
           position: {
-            location: undefined,
+            epubCfi: null,
+            href: null,
             progressFraction: 0,
+            displayedPage: 0,
+            displayedTotal: 0,
           },
         };
         setState(initial);
@@ -60,9 +63,10 @@ export function useDocumentReadingState(documentId: string | null) {
     [documentId]
   );
 
+  //console.log('useDocumentReadingState', { documentId, state, isLoading, isSaving });
+
   return {
     state,                       // full DocumentReadingState | null
-    position: state?.position ?? null,
     isLoading,
     isSaving,
     refresh,

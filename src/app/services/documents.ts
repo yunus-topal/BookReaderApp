@@ -43,10 +43,12 @@ export async function setReaderSettings(settings: ReaderSettings) {
 
 export async function getDocumentReadingState(documentId: string) {
   const allStates = await getJSON<Record<string, any>>(DOCUMENT_READING_STATES_KEY, {});
+  //console.log('getDocumentReadingState', documentId, allStates[documentId]);
   return allStates[documentId] || null;
 }
 
 export async function setDocumentReadingState(state: { documentId: string; position: any }) {
+  //console.log('document id and saved cfi: ', state.documentId, state.position.epubCfi);
   const allStates = await getJSON<Record<string, any>>(DOCUMENT_READING_STATES_KEY, {});
   allStates[state.documentId] = state;
   await setJSON(DOCUMENT_READING_STATES_KEY, allStates);

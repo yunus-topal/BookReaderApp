@@ -3,30 +3,52 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, IconButton, Text } from 'react-native-paper';
 import { spacing } from '@theme';
-import { ReaderSettings } from '@app/types';
+import { locationToReaderPosition, ReaderPosition, ReaderSettings } from '@app/types';
 import { useReader } from '@epubjs-react-native/core';
 
 interface Props {
   settings: ReaderSettings;
   onSettingsChange: (next: Partial<ReaderSettings>) => void;
+  onUserNavigate?: (pos: ReaderPosition) => void; 
   progress: number;
 }
 
 export const ReaderControlsBar: React.FC<Props> = ({
   settings,
   onSettingsChange,
+  onUserNavigate,
   progress,
 }) => {
-    const { goNext, goPrevious, atStart, atEnd } = useReader();
+    const { goNext, goPrevious, getCurrentLocation } = useReader();
 
+    const handlePrevious = () => {
+      goPrevious();
+
+      const currentLocation = getCurrentLocation();
+      if (!currentLocation) {
+        return;
+      }
+      const currPos = locationToReaderPosition(currentLocation);
+      onUserNavigate?.(currPos);
+    };
+    const handleNext = () => {
+      goNext();
+
+      const currentLocation = getCurrentLocation();
+      if (!currentLocation) {
+        return;
+      }
+      const currPos = locationToReaderPosition(currentLocation);
+      onUserNavigate?.(currPos);
+    };
   
   return (
     <View style={styles.container}>
       {/* Left: page buttons (if enabled) */}
       {['buttons', 'swipeAndButtons', 'all'].includes(settings.pageTurnControl) && (
         <View style={styles.navButtons}>
-          <IconButton icon="chevron-left" size={28} onPress={goPrevious} />
-          <IconButton icon="chevron-right" size={28} onPress={goNext} />
+          <IconButton icon="chevron-left" size={28} onPress={handlePrevious} />
+          <IconButton icon="chevron-right" size={28} onPress={handleNext} />
         </View>
       )}
 

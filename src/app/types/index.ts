@@ -1,3 +1,5 @@
+import { Location } from '@epubjs-react-native/core';
+
 export type SupportedDocType = 'epub' | 'pdf' | 'txt' | 'unknown';
 export * from './readerSettingTypes'; // placeholder for other types
 
@@ -13,13 +15,40 @@ export interface DocumentMeta {
 }
 
 export interface ReaderPosition {
-  // This depends on your EPUB lib (CFI, spine index, etc).
-  // Keep it generic for now:
-  location: string | undefined; // e.g. EPUB CFI, or "chapterId#offset"
-  progressFraction: number; // 0..1 as in DocumentMeta.lastPosition
+  // Canonical locator in the book (EPUB CFI)
+  epubCfi: string | null;
+
+  // Spine href / chapter
+  href: string | null;
+
+  // 0–1 fraction for overall book progress
+  progressFraction: number;
+
+  // For showing "Page X of Y" on the current screen
+  displayedPage: number | null;
+  displayedTotal: number | null;
+
+  // Optional flags
+  atStart?: boolean;
+  atEnd?: boolean;
 }
 
 export interface DocumentReadingState {
   documentId: string;
   position: ReaderPosition;
+}
+
+export function locationToReaderPosition(loc: Location): ReaderPosition {
+  const anchor = loc.start ?? loc.end;
+  //console.log('Mapping location to ReaderPosition', loc);
+
+  return {
+    epubCfi: anchor?.cfi ?? null,
+    href: anchor?.href ?? null,
+    progressFraction: anchor?.percentage ?? 0,
+    displayedPage: anchor?.displayed?.page ?? null,
+    displayedTotal: anchor?.displayed?.total ?? null,
+    atStart: loc.atStart,
+    atEnd: loc.atEnd,
+  };
 }

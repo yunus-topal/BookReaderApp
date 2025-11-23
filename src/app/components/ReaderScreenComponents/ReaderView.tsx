@@ -70,14 +70,14 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
 
   const handleReady = useCallback(() => {
     setIsReady(true);
-    console.log('Reader is ready');
+    //console.log('Reader is ready');
   }, []);
 
   useEffect(() => {
     if (!isReady || hasRestored) return;
 
     if (position?.epubCfi) {
-      console.log('Restoring to saved position', position.epubCfi);
+      //console.log('Restoring to saved position', position.epubCfi);
       setHasRestored(true);
       goToLocation(position.epubCfi);
     } else {
@@ -91,7 +91,7 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
     setHasRestored(false);
   }, []);
 
-  console.log('ReaderView settings', settings);
+  //console.log('ReaderView settings', settings);
 
   return (
     <View style={[styles.container]}>

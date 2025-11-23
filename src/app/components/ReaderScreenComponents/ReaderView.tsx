@@ -1,28 +1,41 @@
 import { DocumentMeta, locationToReaderPosition, ReaderPosition, ReaderSettings } from '@app/types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Location, Reader, useReader } from '@epubjs-react-native/core';
+import { Reader, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
+import { IconButton } from 'react-native-paper';
+import { ReaderControlsBar } from './ReaderControlsBar';
 
 export interface ReaderViewProps {
   document: DocumentMeta;
   settings: ReaderSettings;
   position: ReaderPosition | undefined;
-  onReadyChange?: (ready: boolean) => void;
-  onUserNavigate?: (pos: ReaderPosition) => void; 
+  onUserNavigate?: (pos: ReaderPosition) => void;
 }
 
 export const ReaderView: React.FC<ReaderViewProps> = ({
   document,
   settings,
   position,
-  onReadyChange,
   onUserNavigate,
 }) => {
   const flow = settings.layoutMode === 'scroll' ? 'scrolled-doc' : 'paginated'; // both supported by the lib :contentReference[oaicite:4]{index=4}
-  const { goToLocation, getCurrentLocation, goNext, goPrevious } = useReader();
+  const { goToLocation, goNext, goPrevious } = useReader();
   const [isReady, setIsReady] = useState(false);
   const [hasRestored, setHasRestored] = useState(false);
+
+  const [controlsVisible, setControlsVisible] = useState(false);
+  const [settingsExpanded, setSettingsExpanded] = useState(false);
+
+  const toggleControls = () => {
+    setControlsVisible(prev => {
+      const next = !prev;
+      if (!next) setSettingsExpanded(false);
+      return next;
+    });
+  };
+
+  const toggleExpanded = () => setSettingsExpanded(prev => !prev);
 
   const enableSwipe =
     settings.layoutMode === 'paged' &&
@@ -34,16 +47,14 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
   }, [document.id]);
 
   const handleStarted = useCallback(() => {
-    onReadyChange?.(false);
     setIsReady(false);
     setHasRestored(false);
-  }, [onReadyChange]);
+  }, []);
 
   const handleReady = useCallback(() => {
-    onReadyChange?.(true);
     setIsReady(true);
     console.log('Reader is ready');
-  }, [onReadyChange]);
+  }, []);
 
   useEffect(() => {
     if (!isReady || hasRestored) return;
@@ -59,11 +70,10 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
   }, [isReady, hasRestored, position?.epubCfi, goToLocation]);
 
   const handleDisplayError = useCallback(() => {
-    onReadyChange?.(false);
     setIsReady(false);
     setHasRestored(false);
-  }, [onReadyChange]);
-  
+  }, []);
+
   return (
     <View style={styles.container}>
       <Reader
@@ -75,7 +85,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
         onSelected={(cfiRange, contents) => {
           // later
         }}
-
         onLocationChange={(_, currentLocation) => {
           const nextPos = locationToReaderPosition(currentLocation);
 
@@ -84,7 +93,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
           }
           onUserNavigate?.(nextPos);
         }}
-
         onStarted={handleStarted}
         onReady={handleReady}
         onDisplayError={handleDisplayError}
@@ -111,33 +119,24 @@ export const ReaderView: React.FC<ReaderViewProps> = ({
       />
 
       {/* Tap-zones overlay */}
-      <View
-        pointerEvents="box-none"
-        style={StyleSheet.absoluteFill}
-      >
+      <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
         <View style={styles.tapRow}>
-          <Pressable
-            style={styles.tapLeft}
-            onPress={() => goPrevious?.()}
-          />
-          <Pressable
-            style={styles.tapCenter}
-            // optional: toggle controls, nothing, etc.
-            onPress={() => {
-              // e.g. toggle controls bar
-            }}
-          />
-          <Pressable
-            style={styles.tapRight}
-            onPress={() => goNext?.()}
-          />
+          <Pressable style={styles.tapLeft} onPress={() => goPrevious?.()} />
+          <Pressable style={styles.tapCenter} onPress={toggleControls} />
+          <Pressable style={styles.tapRight} onPress={() => goNext?.()} />
         </View>
       </View>
-      
+
+      <ReaderControlsBar
+        visible={controlsVisible}
+        expanded={settingsExpanded}
+        onToggleVisible={toggleControls}
+        onToggleExpanded={toggleExpanded}
+      />
+
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
@@ -161,12 +160,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   tapLeft: {
-    flex: 3,        // ~30%
+    flex: 3, // ~30%
   },
   tapCenter: {
-    flex: 4,        // ~40%
+    flex: 4, // ~40%
   },
   tapRight: {
-    flex: 3,        // ~30%
+    flex: 3, // ~30%
   },
 });

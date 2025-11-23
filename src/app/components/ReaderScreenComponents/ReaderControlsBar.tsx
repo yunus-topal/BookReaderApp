@@ -1,57 +1,77 @@
-// src/reader/ReaderControlsBar.tsx
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Text } from 'react-native-paper';
-import { spacing } from '@theme';
-import { ReaderSettings } from '@app/types';
+import { View, Text, StyleSheet } from 'react-native';
+import { IconButton } from 'react-native-paper';
 
 interface Props {
-  settings: ReaderSettings;
-  onSettingsChange: (next: Partial<ReaderSettings>) => void;
-  progress: number;
+  visible: boolean;
+  expanded: boolean;
+  onToggleVisible: () => void;
+  onToggleExpanded: () => void;
+  // later: pass reader settings and updater here
 }
 
-export const ReaderControlsBar: React.FC<Props> = ({
-  settings,
-  onSettingsChange,
-  progress,
-}) => {
-  
+export function ReaderControlsBar({
+  visible,
+  expanded,
+  onToggleVisible,
+  onToggleExpanded,
+}: Props) {
+  if (!visible) return null;
+
   return (
     <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Reader settings</Text>
 
-      {/* Center: progress */}
-      <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
+        <IconButton
+          icon={expanded ? 'chevron-down' : 'chevron-up'}
+          size={20}
+          onPress={onToggleExpanded}
+        />
+      </View>
 
-      {/* Right: simple settings toggle placeholder */}
-      <Button
-        mode="text"
-        onPress={() => {
-          // Example toggle: paged <-> scroll
-          onSettingsChange({
-            layoutMode: settings.layoutMode === 'paged' ? 'scroll' : 'paged',
-          });
-        }}
-      >
-        {settings.layoutMode === 'paged' ? 'Scroll' : 'Paged'}
-      </Button>
+      {/* Expanded content */}
+      {expanded && (
+        <View style={styles.content}>
+          <Text style={styles.label}>Background</Text>
+          <Text style={styles.label}>Font</Text>
+          {/* More settings here later */}
+        </View>
+      )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    height: 56,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+    backgroundColor: 'rgba(15,23,42,0.96)',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(148,163,184,0.6)',
+  },
+  header: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-  },
-  navButtons: {
-    flexDirection: 'row',
     alignItems: 'center',
   },
-  progressText: {
+  title: {
     fontWeight: '600',
+    fontSize: 14,
+    color: '#e5e7eb',
+  },
+  content: {
+    marginTop: 8,
+    gap: 8,
+  },
+  label: {
+    fontSize: 12,
+    color: '#9ca3af',
   },
 });

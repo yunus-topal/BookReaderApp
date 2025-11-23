@@ -3,7 +3,6 @@ import React, { useCallback, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { ReaderPosition, ReaderSettings } from '@app/types';
 import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
-import { ReaderControlsBar } from '@app/components/ReaderScreenComponents/ReaderControlsBar';
 import { HomeStackParamList } from '@app/navigation/HomeStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDocumentReadingState } from '@app/hooks/useDocumentReadingState';
@@ -16,8 +15,6 @@ export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const { document } = route.params;
   const { settings, updateSettings } = useReaderSettings();
   const { updatePosition, state, isLoading } = useDocumentReadingState(document.id);
-  const [isBookReady, setIsBookReady] = useState(false);
-
 
   const handleSettingsChange = useCallback(
     async (newSettings: Partial<ReaderSettings>) => {
@@ -51,17 +48,7 @@ export const ReaderScreen: React.FC<Props> = ({ route, navigation }) => {
         settings={settings}
         position={state.position}
         onUserNavigate={handleUserNavigate}
-        onReadyChange={setIsBookReady}
       />
-
-      {/* {isBookReady && (
-        <ReaderControlsBar
-          settings={settings}
-          onSettingsChange={handleSettingsChange}
-          onUserNavigate={handleUserNavigate}
-          progress={state?.position?.progressFraction || 0}
-        />
-      )} */}
     </SafeAreaView>
   );
 };

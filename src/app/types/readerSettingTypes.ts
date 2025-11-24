@@ -8,7 +8,7 @@ export type PageTurnControlMode = 'swipe' | 'buttons' | 'volumeButtons' | 'swipe
 export type ReaderTheme = 'light' | 'dark' | 'indigo' | 'sepia' | 'emerald';
 
 export type ReaderFontFamily = 'lora' | 'roboto' | 'courier' | 'handwriting' | 'medieval';
-export type ReaderFontSize = 'small' | 'medium' | 'large';
+export type ReaderFontSize = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
 
 export interface ReaderSettings {
   layoutMode: ReadingLayoutMode;

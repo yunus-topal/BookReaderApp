@@ -37,6 +37,29 @@ const fontFamilyForSettings = (font: ReaderSettings['fontFamily']) => {
   }
 };
 
+const FONT_SIZE_PERCENT: Record<ReaderSettings['fontSize'], string> = {
+  xsmall: '85%',
+  small: '92%',
+  medium: '100%',
+  large: '108%',
+  xlarge: '116%',
+};
+
+const buildThemeFromSettings = (settings: ReaderSettings) => {
+  const base = READER_THEMES[settings.theme];
+  const fontFamily = fontFamilyForSettings(settings.fontFamily);
+  const fontSize = FONT_SIZE_PERCENT[settings.fontSize] ?? '100%';
+
+  return {
+    ...base,
+    body: {
+      ...(base.body || {}),
+      'font-family': fontFamily,
+      'font-size': fontSize,
+    },
+  };
+};
+
 export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUserNavigate }) => {
   const { settings, updateSettings } = useReaderSettings();
   const { layoutMode, pageTurnControl } = settings;
@@ -53,24 +76,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
     pageTurnControl === 'swipe' ||
     pageTurnControl === 'swipeAndButtons' ||
     pageTurnControl === 'all';
-
-  const buildThemeFromSettings = (settings: ReaderSettings) => {
-    const base = READER_THEMES[settings.theme];
-
-    const fontFamily = fontFamilyForSettings(settings.fontFamily);
-
-    const fontSize =
-      settings.fontSize === 'small' ? '90%' : settings.fontSize === 'large' ? '115%' : '100%';
-
-    return {
-      ...base,
-      body: {
-        ...(base.body || {}),
-        'font-family': fontFamily,
-        'font-size': fontSize,
-      },
-    };
-  };
 
   const defaultThemeRef = useRef(buildThemeFromSettings(settings));
 

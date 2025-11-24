@@ -1,4 +1,5 @@
 import { READER_THEMES, ReaderSettings, ReaderTheme } from '@app/types';
+import Slider from '@react-native-community/slider';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { IconButton } from 'react-native-paper';
 
@@ -17,6 +18,24 @@ const FONT_OPTIONS: { key: ReaderSettings['fontFamily']; previewFamily: string }
   { key: 'handwriting', previewFamily: 'Schoolbell-Regular' },
   { key: 'medieval', previewFamily: 'MedievalSharp-Regular' },
 ];
+
+const FONT_SIZE_KEYS: ReaderSettings['fontSize'][] = [
+  'xsmall',
+  'small',
+  'medium',
+  'large',
+  'xlarge',
+];
+
+const sliderValueFromFontSize = (size: ReaderSettings['fontSize']) => {
+  const idx = FONT_SIZE_KEYS.indexOf(size);
+  return idx === -1 ? 2 : idx; // default to 'medium'
+};
+
+const fontSizeFromSliderValue = (value: number): ReaderSettings['fontSize'] => {
+  const idx = Math.round(value);
+  return FONT_SIZE_KEYS[idx] ?? 'medium';
+};
 
 const themeOptions = (Object.keys(READER_THEMES) as ReaderTheme[]).map(key => ({
   key,
@@ -93,31 +112,28 @@ export function ReaderControlsBar({
           {/* FONT SIZE ROW */}
           <View style={styles.row}>
             <Text style={styles.label}>Text size</Text>
-            <View style={styles.chipRow}>
-              <Pressable
-                style={[styles.chip, fontSize === 'small' && styles.chipActive]}
-                onPress={() => updateSettings({ fontSize: 'small' })}
-              >
-                <Text style={[styles.chipText, fontSize === 'small' && styles.chipTextActive]}>
-                  Small
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[styles.chip, fontSize === 'medium' && styles.chipActive]}
-                onPress={() => updateSettings({ fontSize: 'medium' })}
-              >
-                <Text style={[styles.chipText, fontSize === 'medium' && styles.chipTextActive]}>
-                  Medium
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[styles.chip, fontSize === 'large' && styles.chipActive]}
-                onPress={() => updateSettings({ fontSize: 'large' })}
-              >
-                <Text style={[styles.chipText, fontSize === 'large' && styles.chipTextActive]}>
-                  Large
-                </Text>
-              </Pressable>
+
+            <View style={styles.sliderContainer}>
+              <Text style={styles.sliderLabelSmall}>A</Text>
+
+              <Slider
+                style={styles.slider}
+                minimumValue={0}
+                maximumValue={4}
+                step={1}
+                value={sliderValueFromFontSize(fontSize)}
+                onValueChange={value => {
+                  const next = fontSizeFromSliderValue(value);
+                  if (next !== fontSize) {
+                    updateSettings({ fontSize: next });
+                  }
+                }}
+                minimumTrackTintColor="#e5e7eb"
+                maximumTrackTintColor="#4b5563"
+                thumbTintColor="#e5e7eb"
+              />
+
+              <Text style={styles.sliderLabelLarge}>A</Text>
             </View>
           </View>
         </View>
@@ -230,4 +246,27 @@ const styles = StyleSheet.create({
     borderColor: '#4ea1ff', // highlight color
     borderWidth: 3,
   },
+  // slider for font size
+sliderContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  flex: 1,
+},
+
+  slider: {
+    flex: 1,
+  },
+
+sliderLabelSmall: {
+  fontSize: 12,
+  color: '#9ca3af',
+  marginRight: 2,  // bring closer to slider
+  marginLeft: 48
+},
+
+sliderLabelLarge: {
+  fontSize: 18,
+  color: '#e5e7eb',
+  marginLeft: 2,   // bring closer to slider
+},
 });

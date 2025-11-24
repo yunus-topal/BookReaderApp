@@ -1,7 +1,7 @@
 // src/screens/ReaderScreen.tsx
 import React, { useCallback } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import { ReaderPosition } from '@app/types';
+import { READER_THEMES, ReaderPosition } from '@app/types';
 import { HomeStackParamList } from '@app/navigation/HomeStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDocumentReadingState } from '@app/hooks/useDocumentReadingState';
@@ -33,7 +33,9 @@ export const ReaderScreen: React.FC<Props> = ({ route }) => {
   }
   //console.log('Rendering ReaderScreen with position:', state);
 
-  const safeAreaBg = settings.theme === 'dark' ? '#000' : '#fff';
+  const appliedTheme = READER_THEMES[settings.theme];
+  const safeAreaBg = appliedTheme.body.background;
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: safeAreaBg }]}>
       <ReaderView

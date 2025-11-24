@@ -1,4 +1,4 @@
-import { ReaderSettings } from '@app/types';
+import { READER_THEMES, ReaderSettings, ReaderTheme } from '@app/types';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { IconButton } from 'react-native-paper';
 
@@ -11,12 +11,17 @@ interface Props {
 }
 
 const FONT_OPTIONS: { key: ReaderSettings['fontFamily']; previewFamily: string }[] = [
-  { key: 'lora',        previewFamily: 'Lora-Regular' },
-  { key: 'roboto',      previewFamily: 'Roboto-Regular' },
-  { key: 'courier',     previewFamily: 'Courier' },             // system mono
+  { key: 'lora', previewFamily: 'Lora-Regular' },
+  { key: 'roboto', previewFamily: 'Roboto-Regular' },
+  { key: 'courier', previewFamily: 'Courier' }, // system mono
   { key: 'handwriting', previewFamily: 'Schoolbell-Regular' },
-  { key: 'medieval',    previewFamily: 'MedievalSharp-Regular' },
+  { key: 'medieval', previewFamily: 'MedievalSharp-Regular' },
 ];
+
+const themeOptions = (Object.keys(READER_THEMES) as ReaderTheme[]).map(key => ({
+  key,
+  color: READER_THEMES[key].body.background,
+}));
 
 export function ReaderControlsBar({
   visible,
@@ -46,25 +51,22 @@ export function ReaderControlsBar({
           {/* THEME ROW */}
           <View style={styles.row}>
             <Text style={styles.label}>Theme</Text>
-            <View style={styles.chipRow}>
-              <Pressable
-                style={[styles.chip, theme === 'light' && styles.chipActive]}
-                onPress={() => updateSettings({ theme: 'light' })}
-              >
-                <Text style={[styles.chipText, theme === 'light' && styles.chipTextActive]}>
-                  Light
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[styles.chip, theme === 'dark' && styles.chipActive]}
-                onPress={() => updateSettings({ theme: 'dark' })}
-              >
-                <Text style={[styles.chipText, theme === 'dark' && styles.chipTextActive]}>
-                  Dark
-                </Text>
-              </Pressable>
+
+            <View style={styles.circleRow}>
+              {themeOptions.map(({ key, color }) => (
+                <Pressable
+                  key={key}
+                  onPress={() => updateSettings({ theme: key })}
+                  style={[
+                    styles.circle,
+                    { backgroundColor: color },
+                    theme === key && styles.circleActive,
+                  ]}
+                />
+              ))}
             </View>
           </View>
+
           {/* FONT FAMILY ROW */}
           <View style={styles.row}>
             <Text style={styles.label}>Font</Text>
@@ -209,5 +211,23 @@ const styles = StyleSheet.create({
   fontSampleActive: {
     color: '#111827',
     fontWeight: '700',
+  },
+  circleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+
+  circle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+
+  circleActive: {
+    borderColor: '#4ea1ff', // highlight color
+    borderWidth: 3,
   },
 });

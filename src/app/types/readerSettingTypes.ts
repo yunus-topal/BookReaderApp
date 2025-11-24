@@ -1,10 +1,11 @@
+import { Theme } from '@epubjs-react-native/core';
 import { createContext } from 'react';
 
 export type ReadingLayoutMode = 'paged' | 'scroll'; // maybe more later: 'two-page', etc.
 
 export type PageTurnControlMode = 'swipe' | 'buttons' | 'volumeButtons' | 'swipeAndButtons' | 'all';
 
-export type ReaderTheme = 'light' | 'dark';
+export type ReaderTheme = 'light' | 'dark' | 'indigo' | 'sepia' | 'emerald';
 
 export type ReaderFontFamily = 'lora' | 'roboto' | 'courier' | 'handwriting' | 'medieval';
 export type ReaderFontSize = 'small' | 'medium' | 'large';
@@ -48,6 +49,13 @@ export const ReaderSettingsContext = createContext<ReaderSettingsContextValue | 
   undefined,
 );
 
+export const LIGHT_THEME = {
+  body: {
+    background: '#ffffff',
+    color: '#000000',
+  },
+};
+
 export const DARK_THEME = {
   body: {
     background: '#000000',
@@ -55,9 +63,32 @@ export const DARK_THEME = {
   },
 };
 
-export const LIGHT_THEME = {
+export const INDIGO_THEME = {
   body: {
-    background: '#ffffff',
-    color: '#000000',
+    background: '#1e1b4b',   // deep indigo background
+    color: '#e0e7ff',        // soft indigo-100 text
   },
+};
+
+export const SEPIA_THEME = {
+  body: {
+    background: '#f4ecd8',   // classic sepia tone
+    color: '#5b4636',        // warm brown text
+  },
+};
+
+export const EMERALD_THEME = {
+  body: {
+    background: '#022c22',   // soft emerald-dark background
+    color: '#d1fae5',        // mint text
+  },
+};
+
+
+export const READER_THEMES: Record<ReaderTheme, Theme> = {
+  light: LIGHT_THEME,
+  dark: DARK_THEME,
+  indigo: INDIGO_THEME,
+  sepia: SEPIA_THEME,
+  emerald: EMERALD_THEME,
 };

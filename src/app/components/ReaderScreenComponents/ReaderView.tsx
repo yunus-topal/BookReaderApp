@@ -3,6 +3,7 @@ import {
   DocumentMeta,
   LIGHT_THEME,
   locationToReaderPosition,
+  READER_THEMES,
   ReaderPosition,
   ReaderSettings,
 } from '@app/types';
@@ -54,7 +55,7 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
     pageTurnControl === 'all';
 
   const buildThemeFromSettings = (settings: ReaderSettings) => {
-    const base = settings.theme === 'dark' ? DARK_THEME : LIGHT_THEME;
+    const base = READER_THEMES[settings.theme];
 
     const fontFamily = fontFamilyForSettings(settings.fontFamily);
 

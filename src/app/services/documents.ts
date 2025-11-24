@@ -1,10 +1,21 @@
 import { defaultReaderSettings, DocumentMeta, ReaderSettings } from '@app/types';
 import { getJSON, setJSON } from './storage';
+import { AppThemeName } from '@theme/index';
 
 const RECENTS_KEY = 'recents@v1';
 const LAST_OPENED_KEY = 'last_opened@v1';
 const READER_SETTINGS_KEY = 'reader_settings@v1';
 const DOCUMENT_READING_STATES_KEY = 'document_reading_states@v1';
+const APP_THEME_KEY = 'app_theme@v1';
+
+export async function getSavedThemeName() {
+  // returns null if nothing stored yet; caller can fall back to a default
+  return getJSON<AppThemeName | null>(APP_THEME_KEY, null);
+}
+
+export async function setSavedThemeName(themeName: AppThemeName) {
+  await setJSON(APP_THEME_KEY, themeName);
+}
 
 export async function addRecentDocument(doc: DocumentMeta) {
   const existing = await getJSON<DocumentMeta[]>(RECENTS_KEY, []);

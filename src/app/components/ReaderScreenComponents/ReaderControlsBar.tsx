@@ -1,9 +1,10 @@
-import { ReaderFontFamily, ReaderSettings } from '@app/types';
-import { View, Text, Pressable } from 'react-native';
+import { ReaderSettings } from '@app/types';
+import { View, Text } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { ReaderFontSizeControls } from './ReaderControlBarComponents/ReaderFontSizeControls';
 import { ReaderThemeControls } from './ReaderControlBarComponents/ReaderThemeControls';
 import { createStyles } from './ReaderControlsBarStyles';
+import { ReaderFontFamilyControls } from './ReaderControlBarComponents/ReaderFontFamilyControls';
 
 interface Props {
   visible: boolean;
@@ -12,12 +13,6 @@ interface Props {
   settings: ReaderSettings;
   updateSettings: (patch: Partial<ReaderSettings>) => void;
 }
-
-const FONT_OPTIONS: { key: ReaderFontFamily; previewFamily: string }[] = [
-  { key: 'serif', previewFamily: 'serif' },
-  { key: 'sans-serif', previewFamily: 'sans-serif' },
-  { key: 'monospace', previewFamily: 'monospace' },
-];
 
 export function ReaderControlsBar({
   visible,
@@ -45,35 +40,17 @@ export function ReaderControlsBar({
 
       {expanded && (
         <View style={styles.content}>
-          {/* THEME ROW */}
+          <ReaderThemeControls theme={theme} onChangeTheme={theme => updateSettings({ theme })} />
 
-          <ReaderThemeControls theme={theme} onChangeTheme={(theme) => updateSettings({ theme })} />
+          <ReaderFontFamilyControls
+            fontFamily={fontFamily}
+            onChangeFontFamily={fontFamily => updateSettings({ fontFamily })}
+          />
 
-          {/* FONT FAMILY ROW */}
-          <View style={styles.row}>
-            <Text style={styles.label}>Font</Text>
-            <View style={styles.fontRow}>
-              {FONT_OPTIONS.map(opt => (
-                <Pressable
-                  key={opt.key}
-                  style={[styles.fontChip, fontFamily === opt.key && styles.fontChipActive]}
-                  onPress={() => updateSettings({ fontFamily: opt.key })}
-                >
-                  <Text
-                    style={[
-                      styles.fontSample,
-                      { fontFamily: opt.previewFamily },
-                      fontFamily === opt.key && styles.fontSampleActive,
-                    ]}
-                  >
-                    Aa
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-
-          <ReaderFontSizeControls fontSize={fontSize} onChangeFontSize={(fontSize) => updateSettings({ fontSize })} />
+          <ReaderFontSizeControls
+            fontSize={fontSize}
+            onChangeFontSize={fontSize => updateSettings({ fontSize })}
+          />
         </View>
       )}
     </View>

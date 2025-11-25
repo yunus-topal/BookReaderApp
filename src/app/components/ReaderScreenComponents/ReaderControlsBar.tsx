@@ -1,4 +1,4 @@
-import { ReaderSettings } from '@app/types';
+import { ReaderFontFamily, ReaderSettings } from '@app/types';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { ReaderFontSizeControls } from './ReaderControlBarComponents/ReaderFontSizeControls';
@@ -12,12 +12,10 @@ interface Props {
   updateSettings: (patch: Partial<ReaderSettings>) => void;
 }
 
-const FONT_OPTIONS: { key: ReaderSettings['fontFamily']; previewFamily: string }[] = [
-  { key: 'lora', previewFamily: 'Lora-Regular' },
-  { key: 'roboto', previewFamily: 'Roboto-Regular' },
-  { key: 'courier', previewFamily: 'Courier' }, // system mono
-  { key: 'handwriting', previewFamily: 'Schoolbell-Regular' },
-  { key: 'medieval', previewFamily: 'MedievalSharp-Regular' },
+const FONT_OPTIONS: { key: ReaderFontFamily; previewFamily: string }[] = [
+  { key: 'serif', previewFamily: 'serif' },
+  { key: 'sans-serif', previewFamily: 'sans-serif' },
+  { key: 'monospace', previewFamily: 'monospace' },
 ];
 
 export function ReaderControlsBar({

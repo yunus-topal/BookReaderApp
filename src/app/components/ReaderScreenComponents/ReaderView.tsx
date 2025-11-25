@@ -22,18 +22,14 @@ export interface ReaderViewProps {
 
 const fontFamilyForSettings = (font: ReaderFontFamily) => {
   switch (font) {
-    case 'lora':
-      return 'Lora-Regular';
-    case 'roboto':
-      return 'Roboto-Regular';
-    case 'courier':
-      return 'Courier';
-    case 'handwriting':
-      return 'Schoolbell-Regular';
-    case 'medieval':
-      return 'MedievalSharp-Regular';
+    case 'serif':
+      return 'serif';
+    case 'sans-serif':
+      return 'sans-serif';
+    case 'monospace':
+      return 'monospace';
     default:
-      return '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+      return 'serif';
   }
 };
 
@@ -55,6 +51,9 @@ const buildThemeFromSettings = (settings: ReaderSettings) => {
     body: {
       ...(base.body || {}),
       'font-family': fontFamily,
+      //'font-family': 'serif',
+      //'font-family': 'sans-serif',
+      //'font-family': 'monospace',
       'font-size': fontSize,
     },
   };

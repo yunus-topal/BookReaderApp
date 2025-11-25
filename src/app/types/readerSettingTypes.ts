@@ -7,7 +7,7 @@ export type PageTurnControlMode = 'swipe' | 'buttons' | 'volumeButtons' | 'swipe
 
 export type ReaderTheme = 'light' | 'dark' | 'indigo' | 'sepia' | 'emerald';
 
-export type ReaderFontFamily = 'lora' | 'roboto' | 'courier' | 'handwriting' | 'medieval';
+export type ReaderFontFamily = 'serif' | 'sans-serif' | 'monospace';
 export type ReaderFontSize = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge';
 
 export interface ReaderSettings {
@@ -24,7 +24,7 @@ export const defaultReaderSettings: ReaderSettings = {
   layoutMode: 'paged',
   pageTurnControl: 'swipe',
   theme: 'light',
-  fontFamily: 'lora',
+  fontFamily: 'serif',
   fontSize: 'medium',
 };
 

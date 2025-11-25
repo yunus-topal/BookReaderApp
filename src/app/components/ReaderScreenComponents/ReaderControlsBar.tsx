@@ -1,8 +1,9 @@
 import { ReaderFontFamily, ReaderSettings } from '@app/types';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { ReaderFontSizeControls } from './ReaderControlBarComponents/ReaderFontSizeControls';
 import { ReaderThemeControls } from './ReaderControlBarComponents/ReaderThemeControls';
+import { createStyles } from './ReaderControlsBarStyles';
 
 interface Props {
   visible: boolean;
@@ -26,7 +27,8 @@ export function ReaderControlsBar({
   updateSettings,
 }: Props) {
   if (!visible) return null;
-  const { theme, layoutMode, fontFamily, fontSize } = settings;
+  const { theme, fontFamily, fontSize } = settings;
+  const styles = createStyles();
 
   return (
     <View style={styles.container}>
@@ -77,92 +79,3 @@ export function ReaderControlsBar({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 16,
-    backgroundColor: 'rgba(15,23,42,0.96)',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(148,163,184,0.6)',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontWeight: '600',
-    fontSize: 14,
-    color: '#e5e7eb',
-  },
-  content: {
-    marginTop: 8,
-    gap: 12,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  label: {
-    fontSize: 12,
-    color: '#9ca3af',
-  },
-  chipRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  chip: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#4b5563',
-  },
-  chipActive: {
-    backgroundColor: '#e5e7eb',
-    borderColor: '#e5e7eb',
-  },
-  chipText: {
-    fontSize: 12,
-    color: '#e5e7eb',
-  },
-  chipTextActive: {
-    color: '#111827',
-    fontWeight: '600',
-  },
-  fontRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    justifyContent: 'flex-end',
-  },
-  fontChip: {
-    width: 40,
-    height: 40,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#4b5563',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fontChipActive: {
-    backgroundColor: '#e5e7eb',
-    borderColor: '#e5e7eb',
-  },
-  fontSample: {
-    fontSize: 20,
-    color: '#e5e7eb',
-  },
-  fontSampleActive: {
-    color: '#111827',
-    fontWeight: '700',
-  },
-
-});

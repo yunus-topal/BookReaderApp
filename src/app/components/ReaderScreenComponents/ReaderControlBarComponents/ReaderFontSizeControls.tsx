@@ -1,6 +1,7 @@
 import { ReaderFontSize } from '@app/types';
 import Slider from '@react-native-community/slider';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
+import { createStyles } from '../ReaderControlsBarStyles';
 
 const FONT_SIZE_KEYS: ReaderFontSize[] = [
   'xsmall',
@@ -29,6 +30,7 @@ export const ReaderFontSizeControls = ({
   fontSize,
   onChangeFontSize,
 }: FontSizeControlsRowProps) => {
+  const styles = createStyles();
   return (
     <View style={styles.row}>
       <Text style={styles.label}>Text size</Text>
@@ -58,37 +60,3 @@ export const ReaderFontSizeControls = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  label: {
-    fontSize: 12,
-    color: '#9ca3af',
-  },
-  sliderContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-
-  slider: {
-    flex: 1,
-  },
-
-  sliderLabelSmall: {
-    fontSize: 12,
-    color: '#9ca3af',
-    marginRight: 2, // bring closer to slider
-    marginLeft: 48,
-  },
-
-  sliderLabelLarge: {
-    fontSize: 18,
-    color: '#e5e7eb',
-    marginLeft: 2, // bring closer to slider
-  },
-});

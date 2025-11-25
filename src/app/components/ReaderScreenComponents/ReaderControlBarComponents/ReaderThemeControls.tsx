@@ -1,5 +1,6 @@
 import { READER_THEMES, ReaderTheme } from '@app/types';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
+import { createStyles } from '../ReaderControlsBarStyles';
 
 const themeOptions = (Object.keys(READER_THEMES) as ReaderTheme[]).map(key => ({
   key,
@@ -12,6 +13,7 @@ interface ThemeControlsRowProps {
 }
 
 export const ReaderThemeControls = ({ theme, onChangeTheme }: ThemeControlsRowProps) => {
+  const styles = createStyles();
   return (
     <View style={styles.row}>
       <Text style={styles.label}>Theme</Text>
@@ -32,34 +34,3 @@ export const ReaderThemeControls = ({ theme, onChangeTheme }: ThemeControlsRowPr
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  label: {
-    fontSize: 12,
-    color: '#9ca3af',
-  },
-
-  circleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-
-  circle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-
-  circleActive: {
-    borderColor: '#4ea1ff', // highlight color
-    borderWidth: 3,
-  },
-});

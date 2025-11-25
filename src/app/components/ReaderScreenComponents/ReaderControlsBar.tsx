@@ -2,6 +2,7 @@ import { READER_THEMES, ReaderSettings, ReaderTheme } from '@app/types';
 import Slider from '@react-native-community/slider';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { IconButton } from 'react-native-paper';
+import { FontSizeControls } from './ReaderControlBarComponents/FontSizeControls';
 
 interface Props {
   visible: boolean;
@@ -109,33 +110,8 @@ export function ReaderControlsBar({
               ))}
             </View>
           </View>
-          {/* FONT SIZE ROW */}
-          <View style={styles.row}>
-            <Text style={styles.label}>Text size</Text>
 
-            <View style={styles.sliderContainer}>
-              <Text style={styles.sliderLabelSmall}>A</Text>
-
-              <Slider
-                style={styles.slider}
-                minimumValue={0}
-                maximumValue={4}
-                step={1}
-                value={sliderValueFromFontSize(fontSize)}
-                onValueChange={value => {
-                  const next = fontSizeFromSliderValue(value);
-                  if (next !== fontSize) {
-                    updateSettings({ fontSize: next });
-                  }
-                }}
-                minimumTrackTintColor="#e5e7eb"
-                maximumTrackTintColor="#4b5563"
-                thumbTintColor="#e5e7eb"
-              />
-
-              <Text style={styles.sliderLabelLarge}>A</Text>
-            </View>
-          </View>
+          <FontSizeControls fontSize={fontSize} onChangeFontSize={(size) => updateSettings({ fontSize: size })} />
         </View>
       )}
     </View>

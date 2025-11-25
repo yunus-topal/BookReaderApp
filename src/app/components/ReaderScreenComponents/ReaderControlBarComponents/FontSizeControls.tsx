@@ -25,7 +25,7 @@ interface FontSizeControlsRowProps {
   onChangeFontSize: (size: ReaderSettings['fontSize']) => void;
 }
 
-export const FontSizeControls = ({ fontSize, onChangeFontSize }: FontSizeControlsRowProps) => {
+export const ReaderFontSizeControls = ({ fontSize, onChangeFontSize }: FontSizeControlsRowProps) => {
   return (
     <View style={styles.row}>
       <Text style={styles.label}>Text size</Text>

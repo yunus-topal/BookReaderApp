@@ -1,8 +1,8 @@
-import { READER_THEMES, ReaderSettings, ReaderTheme } from '@app/types';
-import Slider from '@react-native-community/slider';
+import { ReaderSettings } from '@app/types';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import { FontSizeControls } from './ReaderControlBarComponents/FontSizeControls';
+import { ReaderFontSizeControls } from './ReaderControlBarComponents/FontSizeControls';
+import { ReaderThemeControls } from './ReaderControlBarComponents/ReaderThemeControls';
 
 interface Props {
   visible: boolean;
@@ -19,29 +19,6 @@ const FONT_OPTIONS: { key: ReaderSettings['fontFamily']; previewFamily: string }
   { key: 'handwriting', previewFamily: 'Schoolbell-Regular' },
   { key: 'medieval', previewFamily: 'MedievalSharp-Regular' },
 ];
-
-const FONT_SIZE_KEYS: ReaderSettings['fontSize'][] = [
-  'xsmall',
-  'small',
-  'medium',
-  'large',
-  'xlarge',
-];
-
-const sliderValueFromFontSize = (size: ReaderSettings['fontSize']) => {
-  const idx = FONT_SIZE_KEYS.indexOf(size);
-  return idx === -1 ? 2 : idx; // default to 'medium'
-};
-
-const fontSizeFromSliderValue = (value: number): ReaderSettings['fontSize'] => {
-  const idx = Math.round(value);
-  return FONT_SIZE_KEYS[idx] ?? 'medium';
-};
-
-const themeOptions = (Object.keys(READER_THEMES) as ReaderTheme[]).map(key => ({
-  key,
-  color: READER_THEMES[key].body.background,
-}));
 
 export function ReaderControlsBar({
   visible,
@@ -69,23 +46,8 @@ export function ReaderControlsBar({
       {expanded && (
         <View style={styles.content}>
           {/* THEME ROW */}
-          <View style={styles.row}>
-            <Text style={styles.label}>Theme</Text>
 
-            <View style={styles.circleRow}>
-              {themeOptions.map(({ key, color }) => (
-                <Pressable
-                  key={key}
-                  onPress={() => updateSettings({ theme: key })}
-                  style={[
-                    styles.circle,
-                    { backgroundColor: color },
-                    theme === key && styles.circleActive,
-                  ]}
-                />
-              ))}
-            </View>
-          </View>
+          <ReaderThemeControls theme={theme} onChangeTheme={(theme) => updateSettings({ theme })} />
 
           {/* FONT FAMILY ROW */}
           <View style={styles.row}>
@@ -111,7 +73,7 @@ export function ReaderControlsBar({
             </View>
           </View>
 
-          <FontSizeControls fontSize={fontSize} onChangeFontSize={(size) => updateSettings({ fontSize: size })} />
+          <ReaderFontSizeControls fontSize={fontSize} onChangeFontSize={(size) => updateSettings({ fontSize: size })} />
         </View>
       )}
     </View>
@@ -204,45 +166,5 @@ const styles = StyleSheet.create({
     color: '#111827',
     fontWeight: '700',
   },
-  circleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
 
-  circle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-
-  circleActive: {
-    borderColor: '#4ea1ff', // highlight color
-    borderWidth: 3,
-  },
-  // slider for font size
-sliderContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  flex: 1,
-},
-
-  slider: {
-    flex: 1,
-  },
-
-sliderLabelSmall: {
-  fontSize: 12,
-  color: '#9ca3af',
-  marginRight: 2,  // bring closer to slider
-  marginLeft: 48
-},
-
-sliderLabelLarge: {
-  fontSize: 18,
-  color: '#e5e7eb',
-  marginLeft: 2,   // bring closer to slider
-},
 });

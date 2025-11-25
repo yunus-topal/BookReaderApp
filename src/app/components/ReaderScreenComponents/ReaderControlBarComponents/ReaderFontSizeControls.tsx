@@ -1,8 +1,8 @@
-import { ReaderSettings } from '@app/types';
+import { ReaderFontSize } from '@app/types';
 import Slider from '@react-native-community/slider';
 import { View, Text, StyleSheet } from 'react-native';
 
-const FONT_SIZE_KEYS: ReaderSettings['fontSize'][] = [
+const FONT_SIZE_KEYS: ReaderFontSize[] = [
   'xsmall',
   'small',
   'medium',
@@ -10,22 +10,25 @@ const FONT_SIZE_KEYS: ReaderSettings['fontSize'][] = [
   'xlarge',
 ];
 
-const sliderValueFromFontSize = (size: ReaderSettings['fontSize']) => {
+const sliderValueFromFontSize = (size: ReaderFontSize) => {
   const idx = FONT_SIZE_KEYS.indexOf(size);
   return idx === -1 ? 2 : idx; // default to 'medium'
 };
 
-const fontSizeFromSliderValue = (value: number): ReaderSettings['fontSize'] => {
+const fontSizeFromSliderValue = (value: number): ReaderFontSize => {
   const idx = Math.round(value);
   return FONT_SIZE_KEYS[idx] ?? 'medium';
 };
 
 interface FontSizeControlsRowProps {
-  fontSize: ReaderSettings['fontSize'];
-  onChangeFontSize: (size: ReaderSettings['fontSize']) => void;
+  fontSize: ReaderFontSize;
+  onChangeFontSize: (fontSize: ReaderFontSize) => void;
 }
 
-export const ReaderFontSizeControls = ({ fontSize, onChangeFontSize }: FontSizeControlsRowProps) => {
+export const ReaderFontSizeControls = ({
+  fontSize,
+  onChangeFontSize,
+}: FontSizeControlsRowProps) => {
   return (
     <View style={styles.row}>
       <Text style={styles.label}>Text size</Text>

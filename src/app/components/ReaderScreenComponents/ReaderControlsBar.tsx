@@ -1,7 +1,7 @@
 import { ReaderSettings } from '@app/types';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import { ReaderFontSizeControls } from './ReaderControlBarComponents/FontSizeControls';
+import { ReaderFontSizeControls } from './ReaderControlBarComponents/ReaderFontSizeControls';
 import { ReaderThemeControls } from './ReaderControlBarComponents/ReaderThemeControls';
 
 interface Props {
@@ -73,7 +73,7 @@ export function ReaderControlsBar({
             </View>
           </View>
 
-          <ReaderFontSizeControls fontSize={fontSize} onChangeFontSize={(size) => updateSettings({ fontSize: size })} />
+          <ReaderFontSizeControls fontSize={fontSize} onChangeFontSize={(fontSize) => updateSettings({ fontSize })} />
         </View>
       )}
     </View>

@@ -1,13 +1,13 @@
 import {
-  DARK_THEME,
   DocumentMeta,
-  LIGHT_THEME,
   locationToReaderPosition,
   READER_THEMES,
+  ReaderFontFamily,
+  ReaderFontSize,
   ReaderPosition,
   ReaderSettings,
 } from '@app/types';
-import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Reader, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
@@ -20,7 +20,7 @@ export interface ReaderViewProps {
   onUserNavigate?: (pos: ReaderPosition) => void;
 }
 
-const fontFamilyForSettings = (font: ReaderSettings['fontFamily']) => {
+const fontFamilyForSettings = (font: ReaderFontFamily) => {
   switch (font) {
     case 'lora':
       return 'Lora-Regular';
@@ -37,7 +37,7 @@ const fontFamilyForSettings = (font: ReaderSettings['fontFamily']) => {
   }
 };
 
-const FONT_SIZE_PERCENT: Record<ReaderSettings['fontSize'], string> = {
+const FONT_SIZE_PERCENT: Record<ReaderFontSize, string> = {
   xsmall: '85%',
   small: '92%',
   medium: '100%',
@@ -108,7 +108,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
 
   const handleReady = useCallback(() => {
     setIsReady(true);
-    //console.log('Reader is ready');
   }, []);
 
   useEffect(() => {

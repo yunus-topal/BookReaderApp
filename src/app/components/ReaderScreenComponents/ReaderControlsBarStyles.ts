@@ -3,13 +3,32 @@ import { useAppTheme } from '@theme/ThemeProvider';
 import { StyleSheet } from 'react-native';
 import { spacing, layout } from '@theme/spacing';
 
+// Generic helper to turn #rrggbb into rgba(...)
+const hexToRgba = (hex: string, alpha: number) => {
+  if (!hex || typeof hex !== 'string') return hex;
+  let h = hex.replace('#', '');
+  if (h.length === 3) {
+    h = h
+      .split('')
+      .map(ch => ch + ch)
+      .join('');
+  }
+  if (h.length !== 6) return hex;
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
 export const createStyles = () => {
   const { theme } = useAppTheme();
   const palette = theme.appPalette;
   const isDark = palette.mode === 'dark';
 
+  const overlayAlpha = isDark ? 0.96 : 0.94;
+
   return StyleSheet.create({
-    // base container styles
+    // MAIN CONTAINER
     container: {
       position: 'absolute',
       left: 0,
@@ -19,10 +38,8 @@ export const createStyles = () => {
       paddingTop: spacing.sm,
       paddingBottom: spacing.lg,
 
-      // semi-transparent overlay over the reader
-      backgroundColor: isDark
-        ? 'rgba(15, 23, 42, 0.96)' // close to indigo dark surface
-        : 'rgba(255, 255, 255, 0.96)',
+      // semi-transparent version of the current theme surface
+      backgroundColor: hexToRgba(palette.surface, overlayAlpha),
 
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: palette.border,
@@ -111,8 +128,7 @@ export const createStyles = () => {
     sliderLabelLarge: {
       fontSize: 18,
       color: palette.subtle,
-      marginRight: spacing.md,
-      marginLeft: spacing.sm,
+      marginRight: spacing.sm,
     },
 
     // THEME CIRCLES
@@ -126,14 +142,13 @@ export const createStyles = () => {
       width: 28,
       height: 28,
       borderRadius: 14,
-      // subtle outline so even a white theme circle is visible
+      // always visible, even for white theme circle
       borderWidth: 1,
       borderColor: palette.border,
       marginLeft: spacing.xs,
     },
 
     circleActive: {
-      // stronger border for the selected theme
       borderColor: palette.primarySoft,
       borderWidth: 2,
     },

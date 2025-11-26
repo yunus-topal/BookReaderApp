@@ -35,6 +35,7 @@ export const ReaderFontSizeControls = ({
   const styles = createStyles();
   const { theme } = useAppTheme();
   const palette = theme.appPalette;
+  const isDark = palette.mode === 'dark';
 
   return (
     <View style={styles.row}>
@@ -55,9 +56,9 @@ export const ReaderFontSizeControls = ({
               onChangeFontSize(next);
             }
           }}
-          minimumTrackTintColor={palette.primarySoft}
-          maximumTrackTintColor={palette.border}
-          thumbTintColor={palette.primary}
+          minimumTrackTintColor={isDark ? palette.title : palette.primarySoft}
+          maximumTrackTintColor={isDark ? palette.subtle : palette.border}
+          thumbTintColor={isDark ? palette.title : palette.primary}
         />
 
         <Text style={styles.sliderLabelLarge}>A</Text>

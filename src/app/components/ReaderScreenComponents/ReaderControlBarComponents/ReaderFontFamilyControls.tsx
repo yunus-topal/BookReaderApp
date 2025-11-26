@@ -1,3 +1,4 @@
+// src/components/ReaderControlBarComponents/ReaderFontFamilyControls.tsx
 import { View, Text, Pressable } from 'react-native';
 import { createStyles } from '../ReaderControlsBarStyles';
 import { ReaderFontFamily } from '@app/types';
@@ -13,13 +14,12 @@ interface FontFamilyControlsRowProps {
   onChangeFontFamily: (fontFamily: ReaderFontFamily) => void;
 }
 
-
 export const ReaderFontFamilyControls = ({
-    fontFamily,
-    onChangeFontFamily,
+  fontFamily,
+  onChangeFontFamily,
 }: FontFamilyControlsRowProps) => {
   const styles = createStyles();
-  // Placeholder for future implementation
+
   return (
     <View style={styles.row}>
       <Text style={styles.label}>Font</Text>
@@ -27,7 +27,10 @@ export const ReaderFontFamilyControls = ({
         {FONT_OPTIONS.map(opt => (
           <Pressable
             key={opt.key}
-            style={[styles.fontChip, fontFamily === opt.key && styles.fontChipActive]}
+            style={[
+              styles.fontChip,
+              fontFamily === opt.key && styles.fontChipActive,
+            ]}
             onPress={() => onChangeFontFamily(opt.key)}
           >
             <Text

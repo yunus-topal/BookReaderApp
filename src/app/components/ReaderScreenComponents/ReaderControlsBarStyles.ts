@@ -1,9 +1,12 @@
+// src/components/ReaderControlsBarStyles.ts
 import { useAppTheme } from '@theme/ThemeProvider';
 import { StyleSheet } from 'react-native';
+import { spacing, layout } from '@theme/spacing';
 
 export const createStyles = () => {
   const { theme } = useAppTheme();
   const palette = theme.appPalette;
+  const isDark = palette.mode === 'dark';
 
   return StyleSheet.create({
     // base container styles
@@ -12,67 +15,83 @@ export const createStyles = () => {
       left: 0,
       right: 0,
       bottom: 0,
-      paddingHorizontal: 16,
-      paddingTop: 8,
-      paddingBottom: 16,
-      backgroundColor: 'rgba(15,23,42,0.96)',
+      paddingHorizontal: layout.screenPadding,
+      paddingTop: spacing.sm,
+      paddingBottom: spacing.lg,
+
+      // semi-transparent overlay over the reader
+      backgroundColor: isDark
+        ? 'rgba(15, 23, 42, 0.96)' // close to indigo dark surface
+        : 'rgba(255, 255, 255, 0.96)',
+
       borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: 'rgba(148,163,184,0.6)',
+      borderTopColor: palette.border,
     },
+
     header: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
     },
+
     title: {
       fontWeight: '600',
       fontSize: 14,
-      color: '#e5e7eb',
+      color: palette.title,
     },
+
     content: {
-      marginTop: 8,
-      gap: 12,
+      marginTop: spacing.xs,
+      rowGap: spacing.md,
     },
+
     row: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-    },
-    label: {
-      fontSize: 12,
-      color: '#9ca3af',
+      marginTop: spacing.xs,
     },
 
-    // font family styles
+    label: {
+      fontSize: 12,
+      color: palette.subtle,
+    },
+
+    // FONT FAMILY
     fontRow: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
+      alignItems: 'center',
       justifyContent: 'flex-end',
     },
+
     fontChip: {
-      width: 40,
-      height: 40,
       borderRadius: 999,
       borderWidth: 1,
-      borderColor: '#4b5563',
+      borderColor: palette.border,
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+      backgroundColor: 'transparent',
       alignItems: 'center',
       justifyContent: 'center',
+      marginLeft: spacing.xs,
     },
+
     fontChipActive: {
-      backgroundColor: '#e5e7eb',
-      borderColor: '#e5e7eb',
+      backgroundColor: palette.surfaceSoft,
+      borderColor: palette.primarySoft,
     },
+
     fontSample: {
-      fontSize: 20,
-      color: '#e5e7eb',
+      fontSize: 18,
+      color: palette.text,
     },
+
     fontSampleActive: {
-      color: '#111827',
+      color: palette.title,
       fontWeight: '700',
     },
 
-    // font size styles
+    // FONT SIZE
     sliderContainer: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -85,36 +104,38 @@ export const createStyles = () => {
 
     sliderLabelSmall: {
       fontSize: 12,
-      color: '#9ca3af',
-      marginRight: 2, // bring closer to slider
-      marginLeft: 48,
+      color: palette.subtle,
+      marginLeft: spacing.xl,
     },
 
     sliderLabelLarge: {
       fontSize: 18,
-      color: '#e5e7eb',
-      marginLeft: 2, // bring closer to slider
+      color: palette.subtle,
+      marginRight: spacing.md,
+      marginLeft: spacing.sm,
     },
 
-    // theme styles
-
+    // THEME CIRCLES
     circleRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 12,
+      justifyContent: 'flex-end',
     },
 
     circle: {
       width: 28,
       height: 28,
       borderRadius: 14,
-      borderWidth: 2,
-      borderColor: 'transparent',
+      // subtle outline so even a white theme circle is visible
+      borderWidth: 1,
+      borderColor: palette.border,
+      marginLeft: spacing.xs,
     },
 
     circleActive: {
-      borderColor: '#4ea1ff', // highlight color
-      borderWidth: 3,
+      // stronger border for the selected theme
+      borderColor: palette.primarySoft,
+      borderWidth: 2,
     },
   });
 };

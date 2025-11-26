@@ -1,3 +1,4 @@
+// src/components/ReaderControlBarComponents/ReaderThemeControls.tsx
 import { READER_THEMES, ReaderTheme } from '@app/types';
 import { View, Text, Pressable } from 'react-native';
 import { createStyles } from '../ReaderControlsBarStyles';

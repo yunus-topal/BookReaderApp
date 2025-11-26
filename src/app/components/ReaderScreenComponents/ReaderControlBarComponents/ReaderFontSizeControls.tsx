@@ -1,7 +1,9 @@
+// src/components/ReaderControlBarComponents/ReaderFontSizeControls.tsx
 import { ReaderFontSize } from '@app/types';
 import Slider from '@react-native-community/slider';
 import { View, Text } from 'react-native';
 import { createStyles } from '../ReaderControlsBarStyles';
+import { useAppTheme } from '@theme/ThemeProvider';
 
 const FONT_SIZE_KEYS: ReaderFontSize[] = [
   'xsmall',
@@ -31,6 +33,9 @@ export const ReaderFontSizeControls = ({
   onChangeFontSize,
 }: FontSizeControlsRowProps) => {
   const styles = createStyles();
+  const { theme } = useAppTheme();
+  const palette = theme.appPalette;
+
   return (
     <View style={styles.row}>
       <Text style={styles.label}>Text size</Text>
@@ -50,9 +55,9 @@ export const ReaderFontSizeControls = ({
               onChangeFontSize(next);
             }
           }}
-          minimumTrackTintColor="#e5e7eb"
-          maximumTrackTintColor="#4b5563"
-          thumbTintColor="#e5e7eb"
+          minimumTrackTintColor={palette.primarySoft}
+          maximumTrackTintColor={palette.border}
+          thumbTintColor={palette.primary}
         />
 
         <Text style={styles.sliderLabelLarge}>A</Text>

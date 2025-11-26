@@ -1,10 +1,12 @@
+// src/components/ReaderControlsBar.tsx
 import { ReaderSettings } from '@app/types';
 import { View, Text } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import { ReaderFontSizeControls } from './ReaderControlBarComponents/ReaderFontSizeControls';
 import { ReaderThemeControls } from './ReaderControlBarComponents/ReaderThemeControls';
-import { createStyles } from './ReaderControlsBarStyles';
 import { ReaderFontFamilyControls } from './ReaderControlBarComponents/ReaderFontFamilyControls';
+import { createStyles } from './ReaderControlsBarStyles';
+import { useAppTheme } from '@theme/ThemeProvider';
 
 interface Props {
   visible: boolean;
@@ -22,7 +24,10 @@ export function ReaderControlsBar({
   updateSettings,
 }: Props) {
   if (!visible) return null;
-  const { theme, fontFamily, fontSize } = settings;
+
+  const { theme } = useAppTheme();
+  const palette = theme.appPalette;
+  const { theme: readerTheme, fontFamily, fontSize } = settings;
   const styles = createStyles();
 
   return (
@@ -35,12 +40,16 @@ export function ReaderControlsBar({
           icon={expanded ? 'chevron-down' : 'chevron-up'}
           size={20}
           onPress={onToggleExpanded}
+          iconColor={palette.subtle}
         />
       </View>
 
       {expanded && (
         <View style={styles.content}>
-          <ReaderThemeControls theme={theme} onChangeTheme={theme => updateSettings({ theme })} />
+          <ReaderThemeControls
+            theme={readerTheme}
+            onChangeTheme={theme => updateSettings({ theme })}
+          />
 
           <ReaderFontFamilyControls
             fontFamily={fontFamily}

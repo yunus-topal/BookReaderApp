@@ -41,7 +41,7 @@ export default function RootNavigator() {
         }}
       />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
-      <Drawer.Screen name="Vocabulary" component={VocabularyScreen} />
+      {/* <Drawer.Screen name="Vocabulary" component={VocabularyScreen} /> */}
     </Drawer.Navigator>
   );
 }

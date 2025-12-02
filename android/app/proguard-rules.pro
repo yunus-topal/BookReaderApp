@@ -8,3 +8,6 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+-keep class com.facebook.react.devsupport.** { *; }
+-keepclassmembers class com.facebook.react.devsupport.** { *; }
+-keep interface com.facebook.react.devsupport.** { *; }

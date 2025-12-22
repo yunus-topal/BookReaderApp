@@ -78,6 +78,13 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
 
   const defaultThemeRef = useRef(buildThemeFromSettings(settings));
 
+  const suppressSingleTapUntilRef = useRef(0);
+  const suppressSingleTapFor = (ms: number) => {
+    suppressSingleTapUntilRef.current = Date.now() + ms;
+  };
+
+  const shouldSuppressSingleTap = () => Date.now() < suppressSingleTapUntilRef.current;
+
   useEffect(() => {
     if (!isReady) return;
 
@@ -138,8 +145,14 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
         defaultTheme={defaultThemeRef.current}
         enableSwipe={enableSwipe}
         enableSelection
+        onSingleTap={() => {
+          if (shouldSuppressSingleTap()) return;
+          console.log('ReaderView: onSingleTap');
+          toggleControls();
+        }}
         onSelected={(cfiRange, contents) => {
           // later
+          console.log('Selected', cfiRange);
         }}
         onLocationChange={(_, currentLocation) => {
           const nextPos = locationToReaderPosition(currentLocation);
@@ -176,10 +189,18 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
 
       {/* Tap-zones overlay */}
       <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
-        <View style={styles.tapRow}>
-          <Pressable style={styles.tapLeft} onPress={() => goPrevious?.()} />
-          <Pressable style={styles.tapCenter} onPress={toggleControls} />
-          <Pressable style={styles.tapRight} onPress={() => goNext?.()} />
+        <View pointerEvents="box-none" style={styles.tapRow}>
+          <Pressable
+            style={styles.tapLeft}
+            onPressIn={() => suppressSingleTapFor(350)}
+            onPress={() => goPrevious?.()}
+          />
+
+          <Pressable
+            style={styles.tapRight}
+            onPressIn={() => suppressSingleTapFor(350)}
+            onPress={() => goNext?.()}
+          />
         </View>
       </View>
 
@@ -212,16 +233,20 @@ const styles = StyleSheet.create({
   },
 
   tapRow: {
-    flex: 1,
-    flexDirection: 'row',
+    ...StyleSheet.absoluteFill,
   },
   tapLeft: {
-    flex: 3, // ~30%
-  },
-  tapCenter: {
-    flex: 4, // ~40%
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: '18%', // ~18–20% side strip
   },
   tapRight: {
-    flex: 3, // ~30%
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: '18%',
   },
 });

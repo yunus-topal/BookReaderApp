@@ -78,13 +78,6 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
 
   const defaultThemeRef = useRef(buildThemeFromSettings(settings));
 
-  const suppressSingleTapUntilRef = useRef(0);
-  const suppressSingleTapFor = (ms: number) => {
-    suppressSingleTapUntilRef.current = Date.now() + ms;
-  };
-
-  const shouldSuppressSingleTap = () => Date.now() < suppressSingleTapUntilRef.current;
-
   useEffect(() => {
     if (!isReady) return;
 
@@ -134,84 +127,66 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
     setHasRestored(false);
   }, []);
 
-  //console.log('ReaderView settings', settings);
-
   return (
-    <View style={[styles.container]}>
-      <Reader
-        src={document.uri}
-        fileSystem={useFileSystem}
-        flow={flow}
-        defaultTheme={defaultThemeRef.current}
-        enableSwipe={enableSwipe}
-        enableSelection
-        onSingleTap={() => {
-          if (shouldSuppressSingleTap()) return;
-          console.log('ReaderView: onSingleTap');
-          toggleControls();
-        }}
-        onSelected={(cfiRange, contents) => {
-          // later
-          console.log('Selected', cfiRange);
-        }}
-        onLocationChange={(_, currentLocation) => {
-          const nextPos = locationToReaderPosition(currentLocation);
+      <View
+        style={[styles.container]}
+      >
+        <Reader
+          src={document.uri}
+          fileSystem={useFileSystem}
+          flow={flow}
+          defaultTheme={defaultThemeRef.current}
+          enableSwipe={enableSwipe}
+          enableSelection
+          onSingleTap={() => {
+            console.log('ReaderView: onSingleTap');
+            toggleControls();
+          }}
+          onSelected={(cfiRange, contents) => {
+            // later
+            console.log('Selected', cfiRange);
+          }}
+          onLocationChange={(_, currentLocation) => {
+            const nextPos = locationToReaderPosition(currentLocation);
 
-          if (!hasRestored && position?.epubCfi) {
-            return;
-          }
-          onUserNavigate?.(nextPos);
-        }}
-        onStarted={handleStarted}
-        onReady={handleReady}
-        onDisplayError={handleDisplayError}
-        renderLoadingFileComponent={({
-          fileSize,
-          downloadProgress,
-          downloadSuccess,
-          downloadError,
-        }) => {
-          const pct = Math.round((downloadProgress ?? 0) * 100);
+            if (!hasRestored && position?.epubCfi) {
+              return;
+            }
+            onUserNavigate?.(nextPos);
+          }}
+          onStarted={handleStarted}
+          onReady={handleReady}
+          onDisplayError={handleDisplayError}
+          renderLoadingFileComponent={({
+            fileSize,
+            downloadProgress,
+            downloadSuccess,
+            downloadError,
+          }) => {
+            const pct = Math.round((downloadProgress ?? 0) * 100);
 
-          return (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" />
-              <Text style={styles.loadingText}>
-                {downloadSuccess ? 'Opening book…' : `Loading book… ${pct}%`}
-              </Text>
-              {downloadError && (
-                <Text style={styles.loadingError}>Error: {String(downloadError)}</Text>
-              )}
-            </View>
-          );
-        }}
-      />
+            return (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" />
+                <Text style={styles.loadingText}>
+                  {downloadSuccess ? 'Opening book…' : `Loading book… ${pct}%`}
+                </Text>
+                {downloadError && (
+                  <Text style={styles.loadingError}>Error: {String(downloadError)}</Text>
+                )}
+              </View>
+            );
+          }}
+        />
 
-      {/* Tap-zones overlay */}
-      <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
-        <View pointerEvents="box-none" style={styles.tapRow}>
-          <Pressable
-            style={styles.tapLeft}
-            onPressIn={() => suppressSingleTapFor(350)}
-            onPress={() => goPrevious?.()}
-          />
-
-          <Pressable
-            style={styles.tapRight}
-            onPressIn={() => suppressSingleTapFor(350)}
-            onPress={() => goNext?.()}
-          />
-        </View>
+        <ReaderControlsBar
+          visible={controlsVisible}
+          expanded={settingsExpanded}
+          onToggleExpanded={toggleExpanded}
+          settings={settings}
+          updateSettings={updateSettings}
+        />
       </View>
-
-      <ReaderControlsBar
-        visible={controlsVisible}
-        expanded={settingsExpanded}
-        onToggleExpanded={toggleExpanded}
-        settings={settings}
-        updateSettings={updateSettings}
-      />
-    </View>
   );
 };
 

@@ -35,8 +35,6 @@ export const createStyles = () => {
       right: 0,
       bottom: 0,
       paddingHorizontal: layout.screenPadding,
-      paddingTop: spacing.sm,
-      paddingBottom: spacing.lg,
 
       // semi-transparent version of the current theme surface
       backgroundColor: hexToRgba(palette.surface, overlayAlpha),
@@ -60,6 +58,7 @@ export const createStyles = () => {
     content: {
       marginTop: spacing.xs,
       rowGap: spacing.md,
+      marginBottom: spacing.md,
     },
 
     row: {

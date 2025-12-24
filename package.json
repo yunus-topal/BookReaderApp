@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@dr.pogodin/react-native-fs": "^2.36.1",
-    "@epubjs-react-native/core": "github:victorsoares96/epubjs-react-native#95229411e63934f6aa781c58392260149a1d3583",
+    "@epubjs-react-native/core": "file:../Users/emret/Documents/Github/epubjs-react-native/epubjs-react-native-core-1.4.7.tgz",
     "@epubjs-react-native/file-system": "^1.1.4",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/slider": "^5.1.1",

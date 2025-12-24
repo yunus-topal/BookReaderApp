@@ -9,7 +9,7 @@ import {
 } from '@app/types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Reader, useReader } from '@epubjs-react-native/core';
+import { Reader, TapPosition, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
 import { ReaderControlsBar } from './ReaderControlsBar';
 import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
@@ -127,9 +127,35 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
     setHasRestored(false);
   }, []);
 
+  /// handling reader frame measurement
+
+  const readerWrapRef = useRef<View>(null);
+  const [readerFrame, setReaderFrame] = useState<{ x: number; width: number } | null>(null);
+
+  // measure in window coordinates
+  const measureReaderFrame = useCallback(() => {
+    const node = readerWrapRef.current;
+    if (!node) return;
+
+    node.measureInWindow((x, _y, width, _height) => {
+      setReaderFrame({ x, width });
+    });
+  }, []);
+
+  useEffect(() => {
+    // measure once on mount; also re-measure when layout changes
+    measureReaderFrame();
+  }, [measureReaderFrame]);
+
+  ///  handling reader frame measurement
+
   return (
+    <View style={[styles.container]}>
       <View
-        style={[styles.container]}
+        ref={readerWrapRef}
+        style={StyleSheet.absoluteFill}
+        onLayout={measureReaderFrame}
+        pointerEvents="box-none"
       >
         <Reader
           src={document.uri}
@@ -138,8 +164,27 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
           defaultTheme={defaultThemeRef.current}
           enableSwipe={enableSwipe}
           enableSelection
-          onSingleTap={() => {
-            console.log('ReaderView: onSingleTap');
+          onSingleTap={(pos: TapPosition) => {
+            // Fallback to pos.x if we don't have a measured frame yet
+            const frame = readerFrame;
+            const width = frame?.width ?? 0;
+
+            // If we can measure, compute local X using absoluteX
+            const localX = frame && width > 0 ? pos.absoluteX - frame.x : pos.x;
+
+            if (width > 0) {
+              const edge = width * 0.15;
+
+              if (localX <= edge) {
+                goPrevious?.();
+                return;
+              }
+              if (localX >= width - edge) {
+                goNext?.();
+                return;
+              }
+            }
+
             toggleControls();
           }}
           onSelected={(cfiRange, contents) => {
@@ -178,15 +223,16 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
             );
           }}
         />
-
-        <ReaderControlsBar
-          visible={controlsVisible}
-          expanded={settingsExpanded}
-          onToggleExpanded={toggleExpanded}
-          settings={settings}
-          updateSettings={updateSettings}
-        />
       </View>
+
+      <ReaderControlsBar
+        visible={controlsVisible}
+        expanded={settingsExpanded}
+        onToggleExpanded={toggleExpanded}
+        settings={settings}
+        updateSettings={updateSettings}
+      />
+    </View>
   );
 };
 

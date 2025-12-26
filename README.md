@@ -1,8 +1,34 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
 # Getting Started
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Step 0: Build Prep
+
+Update version code and name in android/app/build.gradle
+```sh
+defaultConfig {
+  versionCode 42
+  versionName "1.4.0"
+}
+```
+Install npm packages
+```
+npm install
+```
+Clean Android Build
+```
+cd android
+./gradlew clean
+cd ..
+```
+Build apk
+```
+cd android
+./gradlew assembleRelease
+cd ..
+```
+
 
 ## Step 1: Start Metro
 

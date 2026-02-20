@@ -3,14 +3,15 @@ import {
   locationToReaderPosition,
   ReaderPosition,
 } from '@app/types';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Clipboard, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Reader, TapPosition, useReader } from '@epubjs-react-native/core';
 import { useFileSystem } from '@epubjs-react-native/file-system';
 import { ReaderControlsBar } from '../ReaderControlsBar';
 import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
 import { buildThemeFromSettings } from './ReaderViewConsts';
 import { readerViewStyles } from './ReaderViewStyles';
+import { ReadAloudDialog } from './ReadAloudDialog';
 
 export interface ReaderViewProps {
   document: DocumentMeta;
@@ -29,6 +30,10 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
 
   const [controlsVisible, setControlsVisible] = useState(false);
   const [settingsExpanded, setSettingsExpanded] = useState(false);
+
+  // read aloud state
+  const [readAloudOpen, setReadAloudOpen] = useState(false);
+  const [readAloudText, setReadAloudText] = useState('');
 
   const styles = readerViewStyles();
 
@@ -111,6 +116,37 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
 
   ///  handling reader frame measurement
 
+
+  const menuItems = useMemo(
+    () => [
+      {
+        label: "Translate+",
+        action: (cfiRange: string, text: string) => {
+          console.log("Translate", { cfiRange, text });
+
+          // clear the selection after action
+          return true;
+        },
+      },
+      {
+        label: "Copy",
+        action: (_cfiRange: string, text: string) => {
+          Clipboard.setString(text);
+          return true; // clear selection after copy (optional)
+        },
+      },
+      {
+        label: "Read aloud…",
+        action: (_cfiRange: string, selectedText: string) => {
+          setReadAloudText(selectedText);
+          setReadAloudOpen(true);
+          return false; // keep selection while dialog is open
+        },
+      },
+    ],
+    []
+  );
+
   return (
     <View style={[styles.container]}>
       <View
@@ -184,6 +220,7 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
               </View>
             );
           }}
+          menuItems={menuItems}
         />
       </View>
 
@@ -194,6 +231,16 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
         settings={settings}
         updateSettings={updateSettings}
       />
+      {/* Read Aloud Dialog */}
+       {/* This is a placeholder. You would replace this with your actual dialog component */}
+       {readAloudOpen && ( 
+        <ReadAloudDialog
+          visible={readAloudOpen}
+          text={readAloudText}
+          onClose={() => setReadAloudOpen(false)}
+        />
+
+      )}
     </View>
   );
 };

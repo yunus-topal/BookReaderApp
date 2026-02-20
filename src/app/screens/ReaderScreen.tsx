@@ -5,7 +5,7 @@ import { READER_THEMES, ReaderPosition } from '@app/types';
 import { HomeStackParamList } from '@app/navigation/HomeStackNavigator';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useDocumentReadingState } from '@app/hooks/useDocumentReadingState';
-import { ReaderView } from '../components/ReaderScreenComponents/ReaderView';
+import { ReaderView } from '../components/ReaderScreenComponents/ReaderView/ReaderView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
 

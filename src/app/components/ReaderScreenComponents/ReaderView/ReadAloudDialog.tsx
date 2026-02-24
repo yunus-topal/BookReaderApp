@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Modal, View, Text, Pressable, FlatList } from "react-native";
+import { Modal, View, Text, Pressable, FlatList, StyleSheet } from "react-native";
 import Tts from "react-native-tts";
 
 type Voice = {
@@ -67,35 +67,35 @@ export function ReadAloudDialog({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={{ flex: 1, justifyContent: "center", padding: 24, backgroundColor: "rgba(0,0,0,0.4)" }}>
-        <View style={{ backgroundColor: "white", borderRadius: 16, padding: 16, maxHeight: "75%" }}>
-          <Text style={{ fontWeight: "700", fontSize: 16, marginBottom: 10 }}>
+      <View style={styles.overlay}>
+        <View style={styles.dialog}>
+          <Text style={styles.title}>
             Read aloud
           </Text>
 
           {!!error && (
-            <View style={{ marginBottom: 12 }}>
-              <Text style={{ marginBottom: 8 }}>{error}</Text>
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
               <Pressable
                 onPress={() => Tts.requestInstallEngine()} // :contentReference[oaicite:4]{index=4}
-                style={{ paddingVertical: 8 }}
+                style={styles.installButton}
               >
-                <Text style={{ fontWeight: "700" }}>Install TTS engine</Text>
+                <Text style={styles.boldText}>Install TTS engine</Text>
               </Pressable>
             </View>
           )}
 
           <Pressable
             onPress={() => Tts.requestInstallData()} // opens Android activity to install more language/voice data :contentReference[oaicite:5]{index=5}
-            style={{ paddingVertical: 8, marginBottom: 8 }}
+            style={styles.moreVoicesButton}
           >
-            <Text style={{ fontWeight: "700" }}>Get more voices / languages</Text>
-            <Text style={{ opacity: 0.6, fontSize: 12 }}>
+            <Text style={styles.boldText}>Get more voices / languages</Text>
+            <Text style={styles.moreVoicesText}>
               Opens system TTS downloads
             </Text>
           </Pressable>
 
-          <Text style={{ fontWeight: "700", marginTop: 6, marginBottom: 6 }}>
+          <Text style={styles.availableTitle}>
             Available languages
           </Text>
 
@@ -103,22 +103,76 @@ export function ReadAloudDialog({
             data={languages}
             keyExtractor={(x) => x}
             renderItem={({ item }) => (
-              <Pressable onPress={() => speakInLanguage(item)} style={{ paddingVertical: 10 }}>
+              <Pressable onPress={() => speakInLanguage(item)} style={styles.languageItem}>
                 <Text>{item}</Text>
               </Pressable>
             )}
             ListEmptyComponent={
-              <Text style={{ opacity: 0.6 }}>
+              <Text style={styles.emptyText}>
                 No voices found (or they’re not installed yet).
               </Text>
             }
           />
 
-          <Pressable onPress={onClose} style={{ paddingTop: 12 }}>
-            <Text style={{ fontWeight: "700" }}>Close</Text>
+          <Pressable onPress={onClose} style={styles.closeButton}>
+            <Text style={styles.boldText}>Close</Text>
           </Pressable>
         </View>
       </View>
     </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 24,
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
+  dialog: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 16,
+    maxHeight: "75%",
+  },
+  title: {
+    fontWeight: "700",
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  errorContainer: {
+    marginBottom: 12,
+  },
+  errorText: {
+    marginBottom: 8,
+  },
+  installButton: {
+    paddingVertical: 8,
+  },
+  moreVoicesButton: {
+    paddingVertical: 8,
+    marginBottom: 8,
+  },
+  moreVoicesText: {
+    opacity: 0.6,
+    fontSize: 12,
+  },
+  availableTitle: {
+    fontWeight: "700",
+    marginTop: 6,
+    marginBottom: 6,
+  },
+  languageItem: {
+    paddingVertical: 10,
+  },
+  emptyText: {
+    opacity: 0.6,
+  },
+  closeButton: {
+    paddingTop: 12,
+  },
+  boldText: {
+    fontWeight: "700",
+  },
+});

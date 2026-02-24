@@ -12,6 +12,7 @@ import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
 import { buildThemeFromSettings } from './ReaderViewConsts';
 import { readerViewStyles } from './ReaderViewStyles';
 import { ReadAloudDialog } from './ReadAloudDialog';
+import TranslatorDialog from './TranslateDialog/TranslateDialog';
 
 export interface ReaderViewProps {
   document: DocumentMeta;
@@ -34,6 +35,10 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
   // read aloud state
   const [readAloudOpen, setReadAloudOpen] = useState(false);
   const [readAloudText, setReadAloudText] = useState('');
+
+  // translation states
+  const [translateOpen, setTranslateOpen] = useState(false);
+  const [translateText, setTranslateText] = useState('');
 
   const styles = readerViewStyles();
 
@@ -122,10 +127,9 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
       {
         label: "Translate+",
         action: (cfiRange: string, text: string) => {
-          console.log("Translate", { cfiRange, text });
-
-          // clear the selection after action
-          return true;
+          setTranslateText(text);
+          setTranslateOpen(true);
+          return true; // remove highlight after selection.
         },
       },
       {
@@ -231,16 +235,23 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
         settings={settings}
         updateSettings={updateSettings}
       />
-      {/* Read Aloud Dialog */}
-       {/* This is a placeholder. You would replace this with your actual dialog component */}
-       {readAloudOpen && ( 
+       
+      {readAloudOpen && ( 
         <ReadAloudDialog
           visible={readAloudOpen}
           text={readAloudText}
           onClose={() => setReadAloudOpen(false)}
         />
-
       )}
+
+      {translateOpen && (
+        <TranslatorDialog
+          isVisible={translateOpen}
+          text={translateText}
+          onClose={() => setTranslateOpen(false)}
+        />
+      )}
+
     </View>
   );
 };

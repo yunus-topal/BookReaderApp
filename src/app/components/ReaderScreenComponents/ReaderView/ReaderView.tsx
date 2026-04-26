@@ -12,7 +12,7 @@ import { useReaderSettings } from '@app/hooks/useReaderSettingsStore';
 import { buildThemeFromSettings } from './ReaderViewConsts';
 import { readerViewStyles } from './ReaderViewStyles';
 import { ReadAloudDialog } from './ReadAloudDialog';
-import TranslatorDialog from './TranslateDialog/TranslateDialog';
+import TranslateDialog from './TranslateDialog/TranslateDialog';
 
 export interface ReaderViewProps {
   document: DocumentMeta;
@@ -245,7 +245,7 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
       )}
 
       {translateOpen && (
-        <TranslatorDialog
+        <TranslateDialog
           isVisible={translateOpen}
           text={translateText}
           onClose={() => setTranslateOpen(false)}

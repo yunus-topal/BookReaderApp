@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Modal,
   View,
@@ -9,8 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useDeepLTranslation } from "./useDeepLTranslation";
 
-type TranslatorDialogProps = {
+type TranslateDialogProps = {
   isVisible: boolean;
   text: string;
   onClose: () => void;
@@ -18,22 +19,20 @@ type TranslatorDialogProps = {
 
 type Lang = "EN" | "DE";
 
-function dummyTranslate(input: string, from: Lang, to: Lang): string {
-  // Replace this with your real translation call later.
-  if (!input.trim()) return "";
-  return `[${from}→${to}] ${input}`;
-}
-
-export default function TranslatorDialog({
+export default function TranslateDialog({
   isVisible,
   text,
   onClose,
-}: TranslatorDialogProps) {
+}: TranslateDialogProps) {
   const [fromLang, setFromLang] = useState<Lang>("EN");
   const [toLang, setToLang] = useState<Lang>("DE");
 
   const [inputText, setInputText] = useState<string>(text ?? "");
   const [outputText, setOutputText] = useState<string>("");
+
+  const { translate, isLoading, error, last } = useDeepLTranslation({
+    defaultTargetLang: "EN-US", // default: English
+  });
 
   // Keep inputText in sync with prop `text` when the dialog opens / changes.
   useEffect(() => {
@@ -42,12 +41,30 @@ export default function TranslatorDialog({
     }
   }, [isVisible, text]);
 
-  // Compute translation whenever inputs change.
-  useEffect(() => {
-    setOutputText(dummyTranslate(inputText, fromLang, toLang));
-  }, [inputText, fromLang, toLang]);
+  const runTranslation = async (value: string, targetLang: Lang) => {
+    if (!value.trim()) return;
+    const deepLTarget = targetLang === "EN" ? "EN-US" : "DE";
+    const result = await translate({ text: value, targetLang: deepLTarget });
+    if (result) setOutputText(result.output);
+  };
 
-  const title = useMemo(() => "Translator", []);
+  useEffect(() => {
+    if (isVisible && inputText.trim()) {
+      runTranslation(inputText, toLang);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!inputText.trim()) {
+      setOutputText("");
+      return;
+    }
+    const timer = setTimeout(() => {
+      runTranslation(inputText, toLang);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [inputText, toLang]);
 
   const swapLanguages = () => {
     setFromLang((prev) => (prev === "EN" ? "DE" : "EN"));
@@ -74,7 +91,7 @@ export default function TranslatorDialog({
           <View style={styles.card}>
             {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.headerTitle}>{title}</Text>
+              <Text style={styles.headerTitle}>Translator</Text>
 
               <Pressable onPress={handleClose} hitSlop={10} style={styles.closeBtn}>
                 <Text style={styles.closeText}>✕</Text>
@@ -126,8 +143,10 @@ export default function TranslatorDialog({
             {/* Output box */}
             <Text style={styles.sectionLabel}>Translation</Text>
             <View style={[styles.textBox, styles.outputBox]}>
-              <Text style={styles.outputText}>
-                {outputText || `Translation will appear here (${fromLang}→${toLang}).`}
+              <Text style={[styles.outputText, isLoading && styles.outputTextMuted]}>
+                {isLoading
+                  ? "Translating…"
+                  : outputText || `Translation will appear here (${fromLang}→${toLang}).`}
               </Text>
             </View>
           </View>
@@ -236,6 +255,9 @@ const styles = StyleSheet.create({
   outputText: {
     color: "#fff",
     fontSize: 15,
+  },
+  outputTextMuted: {
+    color: "rgba(255,255,255,0.4)",
   },
   actionRow: {
     flexDirection: "row",

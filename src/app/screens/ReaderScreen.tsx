@@ -16,6 +16,9 @@ export const ReaderScreen: React.FC<Props> = ({ route }) => {
   const { document } = route.params;
   const { updatePosition, state, isLoading } = useDocumentReadingState(document.id);
 
+  const appliedTheme = READER_THEMES[settings.theme];
+  const safeAreaBg = appliedTheme.body.background;
+
   const handleUserNavigate = useCallback(
     (pos: ReaderPosition) => {
       // Persist only on user navigation (swipe, buttons, etc.)
@@ -33,13 +36,10 @@ export const ReaderScreen: React.FC<Props> = ({ route }) => {
   }
   //console.log('Rendering ReaderScreen with position:', state);
 
-  const appliedTheme = READER_THEMES[settings.theme];
-  const safeAreaBg = appliedTheme.body.background;
-
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: safeAreaBg }]}>
       <ReaderView
-        key={document.id}
+        //key={document.id}
         document={document}
         position={state.position}
         onUserNavigate={handleUserNavigate}

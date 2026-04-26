@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Modal,
   View,
@@ -8,6 +8,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from "react-native";
 import { useDeepLTranslation } from "./useDeepLTranslation";
 
@@ -29,7 +30,9 @@ export default function TranslateDialog({
 
   const [inputText, setInputText] = useState<string>(text ?? "");
   const [outputText, setOutputText] = useState<string>("");
-
+  const [dismissedError, setDismissedError] = useState<string | null>(null);
+  const errorAnim = useRef(new Animated.Value(0)).current;
+  
   const { translate, isLoading, error, last } = useDeepLTranslation({
     defaultTargetLang: "EN-US", // default: English
   });
@@ -37,9 +40,26 @@ export default function TranslateDialog({
   // Keep inputText in sync with prop `text` when the dialog opens / changes.
   useEffect(() => {
     if (isVisible) {
+      setFromLang("DE");
+      setToLang("EN");
       setInputText(text ?? "");
+      setOutputText("");
     }
   }, [isVisible, text]);
+
+  // Animate error banner in when a new error arrives, out when dismissed.
+  useEffect(() => {
+    if (error && error !== dismissedError) {
+      Animated.spring(errorAnim, { toValue: 1, useNativeDriver: true, tension: 120, friction: 10 }).start();
+    } else {
+      Animated.timing(errorAnim, { toValue: 0, duration: 180, useNativeDriver: true }).start();
+    }
+  }, [error, dismissedError]);
+  const dismissError = () => setDismissedError(error ?? null);
+
+  useEffect(() => {
+    if (!error) setDismissedError(null);
+  }, [error]);
 
   const runTranslation = async (value: string, targetLang: Lang) => {
     if (!value.trim()) return;
@@ -69,12 +89,14 @@ export default function TranslateDialog({
   const swapLanguages = () => {
     setFromLang((prev) => (prev === "EN" ? "DE" : "EN"));
     setToLang((prev) => (prev === "EN" ? "DE" : "EN"));
+    // Swap visible texts — the debounce effect will re-translate the new input
+    setInputText(outputText);
+    setOutputText(inputText);
   };
 
-  const swapTexts = () => {
-    // Swap the visible content: what was translated becomes input (and vice versa).
-    setInputText(outputText);
-    // output will auto-recompute via effect
+  const saveToDictionary = () => {
+    // TODO: save the current text pair
+    console.log("Save to dictionary - not implemented yet");
   };
 
   const handleClose = () => {
@@ -128,8 +150,8 @@ export default function TranslateDialog({
 
             {/* Actions */}
             <View style={styles.actionRow}>
-              <Pressable onPress={swapTexts} style={styles.actionBtn}>
-                <Text style={styles.actionBtnText}>Swap texts</Text>
+              <Pressable onPress={saveToDictionary} style={styles.actionBtn}>
+                <Text style={styles.actionBtnText}>Save to Dictionary</Text>
               </Pressable>
 
               <Pressable
@@ -139,6 +161,27 @@ export default function TranslateDialog({
                 <Text style={styles.actionBtnText}>Clear</Text>
               </Pressable>
             </View>
+
+            {/* Error banner */}
+            {error && error !== dismissedError && (
+              <Animated.View
+                style={[
+                  styles.errorBanner,
+                  {
+                    opacity: errorAnim,
+                    transform: [{ scale: errorAnim.interpolate({ inputRange: [0, 1], outputRange: [0.95, 1] }) }],
+                  },
+                ]}
+              >
+                <Text style={styles.errorIcon}>⚠️</Text>
+                <Text style={styles.errorText} numberOfLines={2}>
+                  {error}
+                </Text>
+                <Pressable onPress={dismissError} hitSlop={10} style={styles.errorDismiss}>
+                  <Text style={styles.errorDismissText}>✕</Text>
+                </Pressable>
+              </Animated.View>
+            )}
 
             {/* Output box */}
             <Text style={styles.sectionLabel}>Translation</Text>
@@ -277,6 +320,39 @@ const styles = StyleSheet.create({
   },
   actionBtnText: {
     color: "#fff",
+    fontWeight: "700",
+  },
+  errorBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "rgba(220,53,53,0.18)",
+    borderWidth: 1,
+    borderColor: "rgba(220,53,53,0.45)",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginTop: 8,
+    marginBottom: 2,
+  },
+  errorIcon: {
+    fontSize: 15,
+  },
+  errorText: {
+    flex: 1,
+    color: "#ff8080",
+    fontSize: 13,
+    fontWeight: "500",
+  },
+  errorDismiss: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  errorDismissText: {
+    color: "#ff8080",
+    fontSize: 14,
     fontWeight: "700",
   },
 });

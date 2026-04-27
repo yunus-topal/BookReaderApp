@@ -18,6 +18,11 @@ export const palettes = {
     subtle: '#9ca3af',
     border: '#1f2937',
     danger: '#b91c1c',
+    // New Common Colors
+    success: '#22c55e',
+    warning: '#f59e0b',
+    overlay: 'rgba(0, 0, 0, 0.65)',
+    muted: 'rgba(203, 213, 245, 0.4)', 
     mode: 'dark' as const,
   },
   indigoLight: {
@@ -31,13 +36,18 @@ export const palettes = {
     subtle: '#6b7280',
     border: '#d1d5db',
     danger: '#b91c1c',
+    // New Common Colors
+    success: '#16a34a',
+    warning: '#d97706',
+    overlay: 'rgba(0, 0, 0, 0.4)',
+    muted: 'rgba(17, 24, 39, 0.4)',
     mode: 'light' as const,
   },
 
   // 💚 EMERALD
   emeraldDark: {
-    background: '#03110d',      // deep green-black
-    surface: '#062019',         // dark emerald surface
+    background: '#03110d',
+    surface: '#062019',
     surfaceSoft: '#0b3a2d',
     primary: '#10b981',
     primarySoft: '#34d399',
@@ -45,10 +55,14 @@ export const palettes = {
     text: '#d1fae5',
     subtle: '#6b7280',
     border: '#064e3b',
-    danger: '#b91c1c',
+    danger: '#ef4444',
+    // New Common Colors
+    success: '#059669',
+    warning: '#f59e0b',
+    overlay: 'rgba(0, 0, 0, 0.7)',
+    muted: 'rgba(209, 250, 229, 0.4)',
     mode: 'dark' as const,
   },
-
   emeraldLight: {
     background: '#ecfdf5',
     surface: '#ffffff',
@@ -60,6 +74,11 @@ export const palettes = {
     subtle: '#6b7280',
     border: '#a7f3d0',
     danger: '#b91c1c',
+    // New Common Colors
+    success: '#10b981',
+    warning: '#d97706',
+    overlay: 'rgba(6, 78, 59, 0.2)',
+    muted: 'rgba(6, 78, 59, 0.4)',
     mode: 'light' as const,
   },
 
@@ -74,7 +93,12 @@ export const palettes = {
     text: '#fde68a',
     subtle: '#d1d5db',
     border: '#4b2c18',
-    danger: '#b91c1c',
+    danger: '#ef4444',
+    // New Common Colors
+    success: '#84cc16',
+    warning: '#fbbf24',
+    overlay: 'rgba(27, 19, 10, 0.75)',
+    muted: 'rgba(253, 230, 138, 0.4)',
     mode: 'dark' as const,
   },
   sepiaLight: {
@@ -88,6 +112,11 @@ export const palettes = {
     subtle: '#7c6a54',
     border: '#e5d3b3',
     danger: '#b91c1c',
+    // New Common Colors
+    success: '#65a30d',
+    warning: '#b45309',
+    overlay: 'rgba(63, 42, 20, 0.25)',
+    muted: 'rgba(75, 49, 32, 0.4)',
     mode: 'light' as const,
   },
 };

@@ -229,7 +229,7 @@ export default function TranslateDialog({
                 onPress={() => setInputText("")}
                 style={[styles.actionBtn, styles.secondaryBtn]}
               >
-                <Text style={styles.actionBtnText}>Clear</Text>
+                <Text style={styles.secondaryBtnText}>Clear</Text>
               </Pressable>
             </View>
 
@@ -280,7 +280,7 @@ export default function TranslateDialog({
             <Text style={styles.dupeQuestion}>Do you want to add it again?</Text>
             <View style={styles.dupeActions}>
               <Pressable onPress={() => setPendingDuplicate(null)} style={[styles.dupeBtn, styles.dupeBtnCancel]}>
-                <Text style={styles.dupeBtnText}>Cancel</Text>
+                <Text style={styles.dupeBtnTextCancel}>Cancel</Text>
               </Pressable>
               <Pressable onPress={confirmDuplicateSave} style={[styles.dupeBtn, styles.dupeBtnConfirm]}>
                 <Text style={styles.dupeBtnText}>Add Anyway</Text>

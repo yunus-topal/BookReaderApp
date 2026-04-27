@@ -20,9 +20,9 @@ export const palettes = {
     danger: '#b91c1c',
     // New Common Colors
     success: '#22c55e',
-    warning: '#f59e0b',
-    overlay: 'rgba(0, 0, 0, 0.65)',
-    muted: 'rgba(203, 213, 245, 0.4)', 
+    warning: '#818cf8', // Indigo-400: Feels like part of the brand but stands out
+    overlay: 'rgba(2, 6, 23, 0.8)', // Tinted with background #020617
+    muted: 'rgba(203, 213, 245, 0.45)',
     mode: 'dark' as const,
   },
   indigoLight: {
@@ -38,9 +38,9 @@ export const palettes = {
     danger: '#b91c1c',
     // New Common Colors
     success: '#16a34a',
-    warning: '#d97706',
-    overlay: 'rgba(0, 0, 0, 0.4)',
-    muted: 'rgba(17, 24, 39, 0.4)',
+    warning: '#4f46e5', // Brand Indigo
+    overlay: 'rgba(15, 23, 42, 0.4)', 
+    muted: 'rgba(17, 24, 39, 0.5)',
     mode: 'light' as const,
   },
 
@@ -58,9 +58,9 @@ export const palettes = {
     danger: '#ef4444',
     // New Common Colors
     success: '#059669',
-    warning: '#f59e0b',
-    overlay: 'rgba(0, 0, 0, 0.7)',
-    muted: 'rgba(209, 250, 229, 0.4)',
+    warning: '#2dd4bf', // Teal: Harmonizes with Emerald green but is distinct
+    overlay: 'rgba(3, 17, 13, 0.85)', // Tinted with background #03110d
+    muted: 'rgba(209, 250, 229, 0.45)',
     mode: 'dark' as const,
   },
   emeraldLight: {
@@ -76,9 +76,9 @@ export const palettes = {
     danger: '#b91c1c',
     // New Common Colors
     success: '#10b981',
-    warning: '#d97706',
-    overlay: 'rgba(6, 78, 59, 0.2)',
-    muted: 'rgba(6, 78, 59, 0.4)',
+    warning: '#0d9488', // Darker Teal
+    overlay: 'rgba(6, 78, 59, 0.3)',
+    muted: 'rgba(6, 78, 59, 0.5)',
     mode: 'light' as const,
   },
 
@@ -96,9 +96,9 @@ export const palettes = {
     danger: '#ef4444',
     // New Common Colors
     success: '#84cc16',
-    warning: '#fbbf24',
-    overlay: 'rgba(27, 19, 10, 0.75)',
-    muted: 'rgba(253, 230, 138, 0.4)',
+    warning: '#fbbf24', // Amber/Gold: Standard for Sepia
+    overlay: 'rgba(27, 19, 10, 0.85)', 
+    muted: 'rgba(253, 230, 138, 0.45)',
     mode: 'dark' as const,
   },
   sepiaLight: {
@@ -114,9 +114,9 @@ export const palettes = {
     danger: '#b91c1c',
     // New Common Colors
     success: '#65a30d',
-    warning: '#b45309',
+    warning: '#b45309', // Deep Amber
     overlay: 'rgba(63, 42, 20, 0.25)',
-    muted: 'rgba(75, 49, 32, 0.4)',
+    muted: 'rgba(75, 49, 32, 0.5)',
     mode: 'light' as const,
   },
 };

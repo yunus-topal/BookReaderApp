@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { spacing } from '@theme';
+import { baseColors, spacing } from '@theme';
 import { useAppTheme } from '@theme/ThemeProvider';
 
 const createStyles = () => {
@@ -40,7 +40,7 @@ const createStyles = () => {
       shadowRadius: 2,
     },
     pickBtnText: {
-      color: palette.title,
+      color: baseColors.white,
       fontWeight: '600',
       fontSize: 14,
     },

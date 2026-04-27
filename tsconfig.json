@@ -2,6 +2,7 @@
   "extends": "@react-native/typescript-config",
   "compilerOptions": {
     "target": "esnext",
+    "lib": ["ESNext"], 
     "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",

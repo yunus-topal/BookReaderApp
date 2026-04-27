@@ -246,6 +246,8 @@ export const ReaderView: React.FC<ReaderViewProps> = ({ document, position, onUs
 
       {translateOpen && (
         <TranslateDialog
+          documentId={document.id}
+          documentName={document.name}
           isVisible={translateOpen}
           text={translateText}
           onClose={() => setTranslateOpen(false)}

@@ -3,10 +3,10 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import SettingsScreen from '@app/screens/SettingsScreen';
-import VocabularyScreen from '@app/screens/VocabularyScreen';
 import HomeStackNavigator from './HomeStackNavigator';
 import { useAppTheme } from '@theme/ThemeProvider';
 import { createRootNavigatorScreenOptions } from './RootNavigatorStyles';
+import VocabularyScreen from '@app/screens/VocabularyScreen';
 
 export type RootDrawerParamList = {
   Home: undefined;
@@ -41,7 +41,7 @@ export default function RootNavigator() {
         }}
       />
       <Drawer.Screen name="Settings" component={SettingsScreen} />
-      {/* <Drawer.Screen name="Vocabulary" component={VocabularyScreen} /> */}
+      <Drawer.Screen name="Vocabulary" component={VocabularyScreen} />
     </Drawer.Navigator>
   );
 }

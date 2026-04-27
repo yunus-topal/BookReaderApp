@@ -5,14 +5,19 @@ import {
   Text,
   TextInput,
   Pressable,
-  StyleSheet,
   KeyboardAvoidingView,
   Platform,
   Animated,
 } from "react-native";
 import { useDeepLTranslation } from "./useDeepLTranslation";
+import { generateDictionaryEntryId, getDictionary, setDictionaryEntry } from "@app/services/dictionary";
+import createStyles from "./TranslateDialogStyles";
+
+type ToastState = { message: string; type: "success" | "error" } | null;
 
 type TranslateDialogProps = {
+  documentId: string;
+  documentName: string;
   isVisible: boolean;
   text: string;
   onClose: () => void;
@@ -21,10 +26,13 @@ type TranslateDialogProps = {
 type Lang = "EN" | "DE";
 
 export default function TranslateDialog({
+  documentId,
+  documentName,
   isVisible,
   text,
   onClose,
 }: TranslateDialogProps) {
+  const styles = createStyles();
   const [fromLang, setFromLang] = useState<Lang>("EN");
   const [toLang, setToLang] = useState<Lang>("DE");
 
@@ -32,6 +40,15 @@ export default function TranslateDialog({
   const [outputText, setOutputText] = useState<string>("");
   const [dismissedError, setDismissedError] = useState<string | null>(null);
   const errorAnim = useRef(new Animated.Value(0)).current;
+
+  const [toast, setToast] = useState<ToastState>(null);
+  const toastAnim = useRef(new Animated.Value(0)).current;
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const [pendingDuplicate, setPendingDuplicate] = useState<{
+    existingEntry: { germanText: string; englishDefinition: string };
+    newEntry: Parameters<typeof setDictionaryEntry>[0];
+  } | null>(null);
   
   const { translate, isLoading, error, last } = useDeepLTranslation({
     defaultTargetLang: "EN-US", // default: English
@@ -94,9 +111,63 @@ export default function TranslateDialog({
     setOutputText(inputText);
   };
 
-  const saveToDictionary = () => {
-    // TODO: save the current text pair
-    console.log("Save to dictionary - not implemented yet");
+  const showToast = (message: string, type: "success" | "error") => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast({ message, type });
+    Animated.spring(toastAnim, { toValue: 1, useNativeDriver: true, tension: 120, friction: 10 }).start();
+    toastTimer.current = setTimeout(() => {
+      Animated.timing(toastAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start(() =>
+        setToast(null)
+      );
+    }, 2800);
+  };
+
+  const saveToDictionary = async (force = false) => {
+    if (!inputText.trim() || !outputText.trim()) return;
+    const germanText = fromLang === "DE" ? inputText : outputText;
+    const englishDefinition = fromLang === "EN" ? inputText : outputText;
+    const samples: string[] = [];
+    const entry = {
+      id: generateDictionaryEntryId(documentId),
+      documentId,
+      documentName,
+      germanText,
+      englishDefinition,
+      samples,
+    };
+
+    if (!force) {
+      try {
+        const dict = await getDictionary();
+        const duplicate = Object.values(dict).find(
+          (e) => e.germanText.trim().toLowerCase() === germanText.trim().toLowerCase()
+        );
+        if (duplicate) {
+          setPendingDuplicate({ existingEntry: duplicate, newEntry: entry });
+          return;
+        }
+      } catch {
+        // If we can't read the dictionary, proceed with save
+      }
+    }
+
+    try {
+      await setDictionaryEntry(entry);
+      showToast("Saved to dictionary ✓", "success");
+    } catch {
+      showToast("Failed to save. Please try again.", "error");
+    }
+  };
+
+  const confirmDuplicateSave = async () => {
+    if (!pendingDuplicate) return;
+    setPendingDuplicate(null);
+    try {
+      await setDictionaryEntry(pendingDuplicate.newEntry);
+      showToast("Saved to dictionary ✓", "success");
+    } catch {
+      showToast("Failed to save. Please try again.", "error");
+    }
   };
 
   const handleClose = () => {
@@ -150,7 +221,7 @@ export default function TranslateDialog({
 
             {/* Actions */}
             <View style={styles.actionRow}>
-              <Pressable onPress={saveToDictionary} style={styles.actionBtn}>
+              <Pressable onPress={() => saveToDictionary()} style={styles.actionBtn}>
                 <Text style={styles.actionBtnText}>Save to Dictionary</Text>
               </Pressable>
 
@@ -195,164 +266,47 @@ export default function TranslateDialog({
           </View>
         </KeyboardAvoidingView>
       </View>
+
+      {/* ── Duplicate warning ── */}
+      {pendingDuplicate && (
+        <View style={styles.dupeOverlay}>
+          <View style={styles.dupeCard}>
+            <Text style={styles.dupeTitle}>Already in Dictionary</Text>
+            <Text style={styles.dupeBody}>
+              <Text style={styles.dupeWord}>"{pendingDuplicate.existingEntry.germanText}"</Text>
+              {" "}is already saved with the definition:{"\n"}
+              <Text style={styles.dupeDefinition}>"{pendingDuplicate.existingEntry.englishDefinition}"</Text>
+            </Text>
+            <Text style={styles.dupeQuestion}>Do you want to add it again?</Text>
+            <View style={styles.dupeActions}>
+              <Pressable onPress={() => setPendingDuplicate(null)} style={[styles.dupeBtn, styles.dupeBtnCancel]}>
+                <Text style={styles.dupeBtnText}>Cancel</Text>
+              </Pressable>
+              <Pressable onPress={confirmDuplicateSave} style={[styles.dupeBtn, styles.dupeBtnConfirm]}>
+                <Text style={styles.dupeBtnText}>Add Anyway</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* ── Toast ── */}
+      {toast && (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.toast,
+            toast.type === "error" ? styles.toastError : styles.toastSuccess,
+            {
+              opacity: toastAnim,
+              transform: [{ translateY: toastAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }],
+            },
+          ]}
+        >
+          <Text style={styles.toastText}>{toast.message}</Text>
+        </Animated.View>
+      )}
     </Modal>
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-  },
-  centerWrap: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 16,
-  },
-  card: {
-    borderRadius: 16,
-    backgroundColor: "#121212",
-    padding: 14,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  closeBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.08)",
-  },
-  closeText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-    lineHeight: 18,
-  },
-  langRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 10,
-    marginBottom: 12,
-  },
-  langPill: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: "rgba(255,255,255,0.08)",
-    alignItems: "center",
-  },
-  langPillText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-  swapBtn: {
-    width: 44,
-    height: 36,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.12)",
-  },
-  swapBtnText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  sectionLabel: {
-    color: "rgba(255,255,255,0.75)",
-    fontSize: 12,
-    marginBottom: 6,
-    marginTop: 6,
-  },
-  textBox: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.10)",
-    backgroundColor: "rgba(255,255,255,0.06)",
-    padding: 10,
-    minHeight: 90,
-  },
-  textInput: {
-    color: "#fff",
-    fontSize: 15,
-    minHeight: 70,
-    textAlignVertical: "top",
-  },
-  outputBox: {
-    minHeight: 90,
-  },
-  outputText: {
-    color: "#fff",
-    fontSize: 15,
-  },
-  outputTextMuted: {
-    color: "rgba(255,255,255,0.4)",
-  },
-  actionRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 10,
-    marginBottom: 6,
-  },
-  actionBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 12,
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.14)",
-  },
-  secondaryBtn: {
-    backgroundColor: "rgba(255,255,255,0.08)",
-  },
-  actionBtnText: {
-    color: "#fff",
-    fontWeight: "700",
-  },
-  errorBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: "rgba(220,53,53,0.18)",
-    borderWidth: 1,
-    borderColor: "rgba(220,53,53,0.45)",
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginTop: 8,
-    marginBottom: 2,
-  },
-  errorIcon: {
-    fontSize: 15,
-  },
-  errorText: {
-    flex: 1,
-    color: "#ff8080",
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  errorDismiss: {
-    width: 24,
-    height: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  errorDismissText: {
-    color: "#ff8080",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-});

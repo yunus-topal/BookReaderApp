@@ -9,9 +9,7 @@ export interface DocumentMeta {
   uri: string; // local file uri
   type: SupportedDocType; // inferred type
   coverUri?: string; // optional small cover preview
-  lastPosition: number; // 0..1 progress fraction
   lastOpenedAt: number; // epoch millis
-  //readingState: DocumentReadingState;
 }
 
 export interface ReaderPosition {
@@ -22,7 +20,7 @@ export interface ReaderPosition {
   href: string | null;
 
   // 0–1 fraction for overall book progress
-  progressFraction: number;
+  progress: number;
 
   // For showing "Page X of Y" on the current screen
   displayedPage: number | null;
@@ -45,7 +43,7 @@ export function locationToReaderPosition(loc: Location): ReaderPosition {
   return {
     epubCfi: anchor?.cfi ?? null,
     href: anchor?.href ?? null,
-    progressFraction: anchor?.percentage ?? 0,
+    progress: anchor?.percentage ?? 0,
     displayedPage: anchor?.displayed?.page ?? null,
     displayedTotal: anchor?.displayed?.total ?? null,
     atStart: loc.atStart,

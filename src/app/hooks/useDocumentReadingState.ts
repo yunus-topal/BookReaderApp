@@ -24,7 +24,7 @@ export function useDocumentReadingState(documentId: string | null) {
           position: {
             epubCfi: null,
             href: null,
-            progressFraction: 0,
+            progress: 0,
             displayedPage: 0,
             displayedTotal: 0,
           },

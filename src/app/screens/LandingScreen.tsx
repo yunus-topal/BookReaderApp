@@ -45,7 +45,6 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
           uri: 'file:///storage/emulated/0/Books/demo.epub',
           type: 'epub',
           coverUri: undefined,
-          lastPosition: 0,
           lastOpenedAt: Date.now(),
         });
         await refresh();
@@ -73,7 +72,6 @@ const LandingScreen: React.FC<Props> = ({ navigation }) => {
         uri: safeUri, 
         type: inferType(res.name ?? ''),
         coverUri: undefined,
-        lastPosition: 0,
         lastOpenedAt: Date.now(),
       });
 

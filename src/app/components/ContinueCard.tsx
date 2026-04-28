@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
-import { DocumentMeta } from '@app/types';
+import { DocumentMeta, DocumentReadingState } from '@app/types';
 import createStyles from './ContinueCardStyles';
+import { getDocumentReadingState } from '@app/services/documents';
+import { useIsFocused } from '@react-navigation/native';
 
 interface Props {
   document?: DocumentMeta | null;
@@ -8,7 +11,41 @@ interface Props {
 }
 
 export default function ContinueCard({ document, onPress }: Props) {
-    const styles = createStyles();
+  const styles = createStyles();
+  const isFocused = useIsFocused();
+  const [readingState, setReadingState] = useState<DocumentReadingState | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadProgress() {
+      // If document or ID is missing, reset state and exit
+      if (!document?.id) {
+        setReadingState(null);
+        return;
+      }
+
+      try {
+        const state = await getDocumentReadingState(document.id);
+        if (isMounted) {
+          setReadingState(state);
+        }
+      } catch (error) {
+        console.error("Failed to load reading progress:", error);
+      }
+    }
+
+    if (isFocused) {
+      loadProgress();
+    }
+
+    // Cleanup to prevent state updates on unmounted components
+    return () => {
+      isMounted = false;
+    };
+  }, [document?.id, isFocused]);
+
+
 
   if (!document) {
     return (
@@ -19,6 +56,9 @@ export default function ContinueCard({ document, onPress }: Props) {
       </View>
     );
   }
+
+  const progressPercent = ((readingState?.position?.progress ?? 0) * 100).toFixed(1);
+  
   return (
     <Pressable style={styles.card} onPress={onPress}>
       {document.coverUri ? (
@@ -31,7 +71,7 @@ export default function ContinueCard({ document, onPress }: Props) {
           {document.name}
         </Text>
         <Text style={styles.meta}>
-          Progress: {Math.round((document.lastPosition ?? 0) * 100)}%
+          Progress: {progressPercent}%
         </Text>
       </View>
     </Pressable>
